@@ -1,9 +1,0 @@
-assets 存放img/css/font/audio/video
-components 抽取组件
-hooks 公共代码逻辑
-mock 模拟数据
-router 路由
-service 网络请求
-store 状态管理
-utils 公共工具
-views 页面
