@@ -1,8 +1,12 @@
 <template>
   <div>
-    <h1>This is homeview page.</h1>
+    <ScreenCarousel></ScreenCarousel>
+    <CardItem></CardItem>
   </div>
 </template>
 
-<script></script>
+<script setup>
+import CardItem from "@/components/Homeitem/card-item.vue"
+import ScreenCarousel from "@/components/Homeitem/ScreenCarousel.vue";
+</script>
 <style></style>
