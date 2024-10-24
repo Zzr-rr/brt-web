@@ -1,72 +1,26 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import routes from "@/router/routes";
-import authApi from "@/api/auth";
+// import authApi from "@/api/auth";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      redirect: "/home",
-    },
-    {
-      path: "/home",
-      name: "home",
-      component: () => import("@/views/HomeView.vue"),
-    },
-    {
-      path: "/home/detail/:id",
-      name: "ItemDetail",
-      component: () => import("@/components/HomeitemView/HomeItemView.vue"),
-    },
-    {
-      path: "/about",
-      name: "about",
-      component: () => import("@/views/AboutView.vue"),
-    },
-    {
-      path: "/settings",
-      name: "settings",
-      component: () => import("@/views/SettingsView.vue"),
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: () => import("@/views/LoginView.vue"),
-    },
-    {
-      path: "/users",
-      name: "users",
-      children: [
-        {
-          path: "personalpage", // 去掉开头的 "/"
-          name: "personalpage",
-          component: () => import("@/views/users/PersonalpageView.vue"),
-        },
-      ],
-    },
-    {
-      path: "/questionbank",
-      name: "questionbank",
-      children: [
-        {
-          path: "mybank", // 去掉开头的 "/"
-          name: "mybank",
-          component: () => import("@/views/questionbank/MybankView.vue"),
-        },
-        {
-          path: "square", // 去掉开头的 "/"
-          name: "square",
-          component: () => import("@/views/questionbank/SquareView.vue"),
-        },
-        {
-          path: "upload", // 去掉开头的 "/"
-          name: "upload",
-          component: () => import("@/views/questionbank/UploadView.vue"),
-        },
-      ],
-    },
-  ],
+  routes,
 });
+// router.beforeEach(async (to, from, next) => {
+//   if (to.meta?.requireAuth == false) {
+//     next();
+//   } else {
+//     try {
+//       const res = await authApi.verify();
+//       if (res?.code == 200) {
+//         next();
+//       } else {
+//         next({ path: "/login" });
+//       }
+//     } catch (error) {
+//       console.log("Route Error", error);
+//       next({ path: "/login" });
+//     }
+//   }
+// });
 
 export default router;

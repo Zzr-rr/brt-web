@@ -25,11 +25,16 @@ const routes = [
     component: () => import("@/views/LoginView.vue"),
   },
   {
+    path: "/test",
+    name: "test",
+    component: () => import("@/views/TestView.vue"),
+  },
+  {
     path: "/users",
     name: "users",
     children: [
       {
-        path: "personalpage", // 去掉开头的 "/"
+        path: "personalpage",
         name: "personalpage",
         component: () => import("@/views/users/PersonalpageView.vue"),
       },
@@ -40,17 +45,17 @@ const routes = [
     name: "questionbank",
     children: [
       {
-        path: "mybank", // 去掉开头的 "/"
+        path: "mybank",
         name: "mybank",
         component: () => import("@/views/questionbank/MybankView.vue"),
       },
       {
-        path: "square", // 去掉开头的 "/"
+        path: "square",
         name: "square",
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
       {
-        path: "upload", // 去掉开头的 "/"
+        path: "upload",
         name: "upload",
         component: () => import("@/views/questionbank/UploadView.vue"),
       },

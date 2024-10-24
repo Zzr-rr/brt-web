@@ -1,31 +1,26 @@
 <template>
-  <el-row :gutter="40" class="discount" >
-    <el-col
-      :span="6"
-      v-for="(item, index) in CardItemData"
-      :key="index"
-    > 
-      <div class="item"  :key="item.id" @click="goToDetail(item.id)">
+  <el-row :gutter="40" class="discount">
+    <el-col :span="6" v-for="(item, index) in CardItemData" :key="index">
+      <div class="item" :key="item.id" @click="goToDetail(item.id)">
         <div class="imgItem">
           <img :src="item.imgUrl" />
         </div>
         <div class="info">
           <div class="title">{{ item.title }}</div>
           <div class="desc">{{ item.desc }}</div>
-          <div class="bottom">{{ item.time}}</div>
+          <div class="bottom">{{ item.time }}</div>
         </div>
       </div>
     </el-col>
   </el-row>
-  
 </template>
 
 <script setup>
 import { ItemList as CardItemData } from "@/assets/data/Homeitem";
 import { useRouter } from 'vue-router';
-const router=useRouter();
-const goToDetail=(id)=>{
-  router.push({name:'ItemDetail',params:{id} });
+const router = useRouter();
+const goToDetail = (id) => {
+  router.push({ name: 'ItemDetail', params: { id } });
 
 }
 </script>
@@ -39,8 +34,8 @@ const goToDetail=(id)=>{
   margin-bottom: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
-  width: 100%; 
-  height: 200px; 
+  width: 100%;
+  height: 200px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -58,17 +53,17 @@ const goToDetail=(id)=>{
   overflow: hidden;
 
   img {
-    width: 100%;  
-    height: 100%; 
-    object-fit: cover; 
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 }
 
 .info {
   padding: 5px;
-  flex: 1; 
+  flex: 1;
   background-color: #eeeeee;
-  
+
   .title {
     padding: 5px;
     font-size: 18px;
