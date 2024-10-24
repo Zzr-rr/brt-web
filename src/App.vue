@@ -1,12 +1,18 @@
 <script setup>
-import { RouterView } from 'vue-router'
+import { RouterView, useRoute } from 'vue-router'
 import HeaderBar from './components/HeaderBar.vue';
 import AsideBar from './components/AsideBar.vue';
 import FooterBar from './components/FooterBar.vue';
+import { computed } from 'vue';
+const route = useRoute();
+const isAuthPage = computed(() => ['/login'].includes(route.path));
 </script>
 
 <template>
-  <div class="common-layout">
+  <div v-if="isAuthPage">
+    <RouterView />
+  </div>
+  <div v-else>
     <el-container>
       <el-header>
         <HeaderBar></HeaderBar>
