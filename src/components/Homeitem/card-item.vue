@@ -1,11 +1,11 @@
 <template>
-  <el-row :gutter="40" class="discount">
+  <el-row :gutter="40" class="discount" >
     <el-col
       :span="6"
       v-for="(item, index) in CardItemData"
       :key="index"
-    >
-      <div class="item">
+    > 
+      <div class="item"  :key="item.id" @click="goToDetail(item.id)">
         <div class="imgItem">
           <img :src="item.imgUrl" />
         </div>
@@ -17,10 +17,17 @@
       </div>
     </el-col>
   </el-row>
+  
 </template>
 
 <script setup>
 import { ItemList as CardItemData } from "@/assets/data/Homeitem";
+import { useRouter } from 'vue-router';
+const router=useRouter();
+const goToDetail=(id)=>{
+  router.push({name:'ItemDetail',params:{id} });
+
+}
 </script>
 
 <style lang="less" scoped>

@@ -2,6 +2,7 @@
   <div>
     <ScreenCarousel></ScreenCarousel>
     <CardItem></CardItem>
+    <router-view></router-view>
   </div>
 </template>
 
