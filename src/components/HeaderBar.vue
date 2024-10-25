@@ -16,6 +16,8 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
+import authApi from '@/api/auth';
+import { ElMessage } from 'element-plus';
 const router = useRouter()
 const route = useRoute()
 const activeMenu = ref(route.path);
@@ -24,7 +26,26 @@ watch(route, (newRoute) => {
 })
 const handleSelect = (key) => {
     activeMenu.value
-    router.push(key)
+    if (key == '/logout') {
+        logout();
+    } else {
+        router.push(key)
+    }
+}
+const logout = async () => {
+    try {
+        const res = await authApi.logout();
+        if (res?.code === 200) {
+            ElMessage.success('退出成功');
+            setTimeout(() => {
+                router.push('/login');
+            }, 1000);
+        } else {
+            ElMessage.error('退出失败');
+        }
+    } catch (error) {
+        ElMessage.error(error);
+    }
 }
 </script>
 
