@@ -13,15 +13,27 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
+import authApi from '@/api/auth';
 import MonkeyGodImg from '@/assets/images/MonkeyGod.png';
-// 定义 Carousel 项目
+
 const carouselItems = ref([
   { imgUrl: MonkeyGodImg, caption: 'Slide 1' },
   { imgUrl: MonkeyGodImg, caption: 'Slide 2' },
   { imgUrl: MonkeyGodImg, caption: 'Slide 3' },
   { imgUrl: MonkeyGodImg, caption: 'Slide 4' },
 ]);
+// const carouselItems=ref[[]];
+// onMounted(async () => {
+//   try {
+//     const response = await authApi.getScreenCarousel();
+//     if (response && response.data) {
+//       carouselItems.value = response.data; // 将API返回的数据赋值给cardItemData
+//     }
+//   } catch (error) {
+//     console.error("获取滑动屏幕内容失败：", error);
+//   }
+// });
 </script>
 
 <style scoped>

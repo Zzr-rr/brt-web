@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import CardItem from "@/components/homeitem/CardItem.vue"
+import CardItem from "@/components/Homeitem/CardItem.vue";
 import ScreenCarousel from "@/components/Homeitem/ScreenCarousel.vue";
 </script>
 <style></style>

@@ -17,21 +17,13 @@
 
             <div class="desc">{{ StoreLoad.item.desc }}</div>
             <p class="content">{{ StoreLoad.item.content }}</p>
+            <LabelBar :labels="StoreLoad.item.labelList"/>
         </el-card>
 
         <el-divider></el-divider>
 
         <h2 class="commentHead">评论</h2>
-        <el-card v-for="(comment, index) in StoreLoad.item.commentslist" :key="index" class="commentitem">
-            <el-row justify="start" align="middle">
-                <el-avatar :src="comment.avatarUrl" size="small"
-                    style="transform: translate(-10px,-12px);">A</el-avatar>
-                <el-col :span="22">
-                    <div class="critic">{{ comment.critic }}</div>
-                    <div class="comment-content">{{ comment.content }}</div>
-                </el-col>
-            </el-row>
-        </el-card>
+        <CommentItem :comments="StoreLoad.item.commentsList" />
 
         <el-divider></el-divider>
         <div class="add-comment">
@@ -49,7 +41,8 @@
 import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { useItemStore } from '@/store/modules/CommentStore';
-
+import CommentItem from '@/components/CommentItem.vue';
+import LabelBar from '@/components/LabelBar.vue';
 const route = useRoute();
 const itemId = route.params.id;
 const StoreLoad = useItemStore();

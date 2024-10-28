@@ -6,7 +6,8 @@ export const ItemList = [
     time: "8.27",
     imgUrl: "www",
     id: 1,
-    commentslist: [],
+    writer: "是压片",
+    commentsList: [],
   },
   {
     title: "元神启动有限公司",
@@ -18,10 +19,11 @@ export const ItemList = [
       "有没有大佬告诉我圆神怎么玩呀，我每次丘丘人都被的卢克吊打，有没有相关的方法捏",
     writer: "是压片",
     id: 2,
-    commentslist: [
+    commentsList: [
       { critic: "朱梓蕊", content: "66" },
       { critic: "王畜良", content: "sb" },
     ],
+    labelList: ["元神", "幽默", "homo",],
   },
   {
     title: "元神启动有限公司",

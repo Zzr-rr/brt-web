@@ -19,6 +19,11 @@ const routes = [
     component: () => import("@/views/SettingsView.vue"),
   },
   {
+    path:"/home/:id",
+    name:"ItemDetail",
+    component: () => import("@/views/TestView.vue"),
+  },
+  {
     path: "/login",
     name: "login",
     meta: { requireAuth: false },

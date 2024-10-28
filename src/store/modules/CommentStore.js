@@ -1,6 +1,7 @@
 // store/itemStore.js
 import { defineStore } from 'pinia';
 import { ItemList as CardItemData } from '@/assets/data/Homeitem';
+import authApi from '@/api/auth';
 
 export const useItemStore = defineStore('itemStore', {
   state: () => ({
@@ -12,6 +13,9 @@ export const useItemStore = defineStore('itemStore', {
     loadData(itemId) {
       this.item = CardItemData.find(i => i.id === Number(itemId));
     },
+    // loadData(itemId) {
+    //   this.item = authApi.getDiscussionById(itemId);
+    // },
 
     // 添加评论
     addComment() {
