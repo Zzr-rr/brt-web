@@ -19,8 +19,19 @@
                 <el-menu-item index="/questionbank/mybank">
                     我的题库
                 </el-menu-item>
-                <el-menu-item index="/questionbank/upload">
-                    上传题库
+            </el-menu-item-group>
+        </el-sub-menu>
+        <el-sub-menu index="/file">
+            <template #title>
+                <el-icon><icon-menu /></el-icon>
+                <span>文件</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/file/myfile">
+                    我的文件
+                </el-menu-item>
+                <el-menu-item index="/file/upload">
+                    上传文件
                 </el-menu-item>
             </el-menu-item-group>
         </el-sub-menu>

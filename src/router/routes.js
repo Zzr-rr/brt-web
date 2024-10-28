@@ -54,10 +54,21 @@ const routes = [
         name: "square",
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
+    ],
+  },
+  {
+    path: "/file",
+    name: "file",
+    children: [
+      {
+        path: "myfile",
+        name: "myfile",
+        component: () => import("@/views/file/MyfileView.vue"),
+      },
       {
         path: "upload",
         name: "upload",
-        component: () => import("@/views/questionbank/UploadView.vue"),
+        component: () => import("@/views/file/UploadView.vue"),
       },
     ],
   },
