@@ -17,12 +17,25 @@
 
 <script setup>
 import { ItemList as CardItemData } from "@/assets/data/Homeitem";
+import authApi from '@/api/auth';
 import { useRouter } from 'vue-router';
+import { onMounted,ref } from 'vue';
+//const CardItemData=ref([]);
 const router = useRouter();
 const goToDetail = (id) => {
   router.push({ name: 'ItemDetail', params: { id } });
-
 }
+
+// onMounted(async () => {
+//   try {
+//     const response = await authApi.getDiscussion();
+//     if (response && response.data) {
+//       CardItemData.value = response.data; // 将API返回的数据赋值给cardItemData
+//     }
+//   } catch (error) {
+//     console.error("获取帖子内容失败：", error);
+//   }
+// });
 </script>
 
 <style lang="less" scoped>

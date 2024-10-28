@@ -16,6 +16,18 @@ const authApi = {
   verify() {
     return axios.get("/auth/verify");
   },
+
+  getDiscussionById(id) {
+    return axios.get(`/discussions/${id}`);
+  },
+
+  getDiscussion(){
+    return axios.get("/discussions");
+  },
+
+  getScreenCarousel(){
+    return axios.get("/ScreenCarousel");
+  }
 };
 
 export default authApi;
