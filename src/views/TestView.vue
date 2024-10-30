@@ -46,7 +46,6 @@ import LabelBar from '@/components/LabelBar.vue';
 const route = useRoute();
 const itemId = route.params.id;
 const StoreLoad = useItemStore();
-
 onMounted(() => {
     StoreLoad.loadData(itemId);
 });

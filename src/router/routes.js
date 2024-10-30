@@ -1,3 +1,5 @@
+import { componentSizeMap } from "element-plus";
+
 const routes = [
   {
     path: "/:catchAll(.*)",
@@ -69,12 +71,18 @@ const routes = [
         path: "myfile",
         name: "myfile",
         component: () => import("@/views/file/MyfileView.vue"),
+        
       },
       {
         path: "upload",
         name: "upload",
         component: () => import("@/views/file/UploadView.vue"),
       },
+      {
+        path:"myfile/share",
+        name:"share",
+        component:()=>import("@/views/WriteView.vue")
+      }
     ],
   },
 ];
