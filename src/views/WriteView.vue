@@ -1,9 +1,10 @@
 <template>
   <div>
   
-      <ElButton @click="returnMyfile">返回</ElButton>
+      
     <el-card class="edit-box-card">
       <!-- 标题输入 -->
+       <ElButton @click="returnMyfile" class="return" icon="Close" text></ElButton>
       <el-form-item label="题目 (title):">
         <el-input v-model="article.title" placeholder="请输入标题"></el-input>
       </el-form-item>
@@ -19,17 +20,8 @@
           v-model="article.content"
           type="textarea"
           :rows="5"
-          placeholder="请输入内容，支持文本和图片"
+          placeholder="请输入内容"
         ></el-input>
-        <el-upload
-          class="upload-demo"
-          action="#"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload>
         <el-dialog v-model="dialogVisible">
           <img width="100%" :src="dialogImageUrl" alt />
         </el-dialog>
@@ -45,7 +37,6 @@
           :on-remove="handleFileRemove"
         >
           <el-button size="small" type="primary">点击上传</el-button>
-          <div slot="tip" class="el-upload__tip">支持多文件上传</div>
         </el-upload>
       </el-form-item>
 
@@ -93,16 +84,6 @@ const tags = ref([
 
 const dialogImageUrl = ref('');
 const dialogVisible = ref(false);
-
-function handlePictureCardPreview(file) {
-  dialogImageUrl.value = file.url;
-  dialogVisible.value = true;
-}
-
-function handleRemove(file, fileList) {
-  console.log(file, fileList);
-}
-
 function handleFilePreview(file) {
   console.log(file);
 }
@@ -112,16 +93,31 @@ function handleFileRemove(file, fileList) {
 }
 
 function submitArticle() {
-  if (!article.value.title || !article.value.desc || !article.value.content || !article.value.tag) {
-    ElMessage.error('请填写完整信息');
+  if(!article.value.title){
+    ElMessage.error('题目必须填写');
     return;
   }
-  ElMessage.success('文章提交成功');
+  else if(article.value.content.length<15){
+    console.log(article.value.content.length);
+    ElMessage.error('至少15字数限制');
+    return;
+  }
+  else if(!article.value.tag){
+    ElMessage.error('至少添加一个标签');
+    return;
+  }
+  ElMessage.success('你母没了');
   console.log('文章内容:', article.value);
 }
 </script>
 
 <style scoped>
+.return{
+  position: absolute;
+  top:90px;
+  right: 30px;
+
+}
 .edit-box-card {
   padding: 20px;
 }
