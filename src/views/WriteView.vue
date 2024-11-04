@@ -5,17 +5,17 @@
     <el-card class="edit-box-card">
       <!-- 标题输入 -->
        <ElButton @click="returnMyfile" class="return" icon="Close" text></ElButton>
-      <el-form-item label="题目 (title):">
+      <el-form-item label="题目 :">
         <el-input v-model="article.title" placeholder="请输入标题"></el-input>
       </el-form-item>
 
       <!-- 简述输入 -->
-      <el-form-item label="简述 (desc):">
+      <el-form-item label="简述 :">
         <el-input v-model="article.desc" placeholder="请输入简述"></el-input>
       </el-form-item>
 
       <!-- 内容输入 -->
-      <el-form-item label="内容 (content):">
+      <el-form-item label="内容 :">
         <el-input
           v-model="article.content"
           type="textarea"
@@ -28,7 +28,7 @@
       </el-form-item>
 
       <!-- 附件上传 -->
-      <el-form-item label="附件 (可选):">
+      <el-form-item label="附件:">
         <el-upload
           action="#"
           multiple

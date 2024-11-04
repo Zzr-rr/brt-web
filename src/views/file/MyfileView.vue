@@ -9,9 +9,9 @@
 
     <!-- 文件列表 -->
     <el-main>
-      <el-table :data="files" class="file">
-        <el-table-column prop="name" label="题库名" width="200" show-overflow-tooltip></el-table-column>
-        <el-table-column prop="modified" label="最近使用时间" width="180" show-overflow-tooltip></el-table-column>
+      <el-table :data="files" size="large" class="file" stripe style="width: 100%" border>
+        <el-table-column prop="name" label="题库名" width="200" ></el-table-column>
+        <el-table-column prop="modified" label="最近使用时间" width="180" ></el-table-column>
         <el-table-column label="标签" width="300">
           <template #default="{ row }">
             <div class="tag-container">
@@ -42,7 +42,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="solve" label="进度" width="100" show-overflow-tooltip></el-table-column>
+        <el-table-column prop="solve" label="进度"  ></el-table-column>
       </el-table>
     </el-main>
   </el-container>
@@ -81,9 +81,11 @@ const shareFile=()=>{
   color: #444444;
   font-family: 'Microsoft YaHei', sans-serif;
   font-size: 13px;
+  width: 100%;
+  
 }
 .file-list-container {
-  width: 80%;
+  width: 100%;
   margin: auto;
   margin-top: 20px;
 }
@@ -115,6 +117,6 @@ const shareFile=()=>{
 .el-table__body tr:hover .action-button {
   display: inline-block;
   position:absolute;
-  left:-250px;
+  left:-260px;
 }
 </style>
