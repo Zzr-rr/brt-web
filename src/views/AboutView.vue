@@ -1,59 +1,52 @@
 <template>
-  <div class="boxcontain">
-    <div class="box box1"></div>
-  <div class="box box2"></div>
+  <div class="animationcontainer">
+    <AboutAnimation
+      v-for="(arrow, index) in arrows"
+      :key="index"
+      :id="index"
+      :size="arrow.size"
+      :movex="arrow.movex"
+      :movey="arrow.movey"
+      :speed="arrow.speed"
+      :delay="arrow.delay"
+      :rotate="arrow.rotate"
+    />
   </div>
-  
 </template>
 
 <script setup>
-import { gsap } from 'gsap';
-import { onMounted } from 'vue';
+import { ref, onMounted } from "vue";
+import AboutAnimation from "@/components/Aboutitem/AboutAnimation.vue";
+
+// 创建随机数生成函数
+function getRandomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+}
+function getRandomRotate(){
+  return Math.random()>0.5?360:-360;
+}
+const arrows = ref([]);
 
 onMounted(() => {
-  gsap.to(".box1", { 
-    x: window.innerWidth - 300,
-    duration: 3,
-    rotation: 360
-  });
-  gsap.to(".box2", { 
-    x: window.innerWidth - 300,
-    duration: 3.5,
-    rotation: 360
-  });
+  const totalArrows = 100; // 要生成的箭头数量
+  for (let i = 0; i < totalArrows; i++) {
+    arrows.value.push({
+      size: getRandomNumber(20, 80), 
+      speed: getRandomNumber(2, 7), 
+      movex: getRandomNumber(100, window.innerWidth-200), 
+      movey: getRandomNumber(0, window.innerHeight+200), 
+      delay: getRandomNumber(0, 10), 
+      rotate:getRandomRotate(),
+    });
+  }
 });
 </script>
 
 <style scoped>
-body {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  min-height: 100vh;
-  margin: 0;
-  overflow: hidden; /* 禁止滚动 */
-}
-
-html {
-  overflow: hidden; /* 确保 HTML 也禁止滚动 */
-}
-.boxcontain{
-  
-}
-.box {
-  display: block;
-  background-color: black;
-  border-radius: 2px;
-  height: 20px;
-  width: 20px;
-  margin: 10px;
-}
-
-.box1 {
-  background-color: red; /* 如果需要，可以对 box1 定制样式 */
-}
-
-.box2 {
-  background-color: blue; /* 如果需要，可以对 box2 定制样式 */
+.animationcontainer {
+  position: relative;
+  width: 100%;
+  height: 1000px;
+  overflow: hidden;
 }
 </style>
