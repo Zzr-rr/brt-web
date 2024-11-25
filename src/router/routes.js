@@ -61,6 +61,11 @@ const routes = [
         name: "square",
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
+      {
+        path: "practice",
+        name: "practice",
+        component: () => import("@/views/questionbank/PracticeView.vue"),
+      },
     ],
   },
   {
