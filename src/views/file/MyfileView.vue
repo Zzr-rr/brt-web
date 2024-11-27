@@ -1,5 +1,5 @@
 <template>
-  <el-container class="file-list-container">
+  <el-container class="file-list-container" >
     <!-- 控制按钮 -->
     <el-header class="file-controls">
       <el-button type="primary" icon="Upload" @click="uploadFile">上传</el-button>
@@ -9,7 +9,7 @@
     </el-header>
 
     <!-- 文件列表 -->
-    <el-main>
+    <el-main >
       <el-table
         :data="files"
         size="large"
@@ -25,8 +25,8 @@
           width="55">
         </el-table-column>
         <el-table-column prop="name" label="文件名" width="200"></el-table-column>
-        <el-table-column prop="modified" label="最近使用时间" width="180"></el-table-column>
-        <el-table-column label="标签" width="300">
+        <el-table-column prop="modified" label="最近使用时间"></el-table-column>
+        <el-table-column label="标签">
           <template #default="{ row }">
             <div class="tag-container">
               <el-tag
@@ -38,7 +38,7 @@
                 {{ tag }}
               </el-tag>
               <div class="action-button">
-                <el-button type="text" @click="someAction(row.id)">进入</el-button>
+                <el-button type="text" @click="someAction(row.id)">下载</el-button>
                 <el-button type="text" @click="someAction(row.id)">删除</el-button>
               </div>
             </div>
@@ -123,7 +123,6 @@ const handleSelectionChange = (val) => {
 }
 .el-table__body tr:hover .action-button {
   display: inline-block;
-  position: absolute;
   left: -260px;
 }
 </style>
