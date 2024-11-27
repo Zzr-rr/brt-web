@@ -118,7 +118,7 @@ export default {
           questionType: "填空题",
           answer: "style",
           score: 5,
-          Isdone:true
+          Isdone:false
         },
         {
           id: 5,
