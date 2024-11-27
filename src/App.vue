@@ -57,4 +57,12 @@ body {
   flex: 1;
   /* 确保内容区域可以自适应剩余空间 */
 }
+#app {
+  background-color: var(--global-background-color);
+  font-size: 20px;
+  color: #000; /* 默认字体颜色为黑色 */
+  transition: background-color 0.3s;
+  padding: 20px;
+  min-height: 100vh; /* 确保背景覆盖整个视口 */
+}
 </style>

@@ -266,7 +266,20 @@ export default {
   margin-bottom: 5px;
 }
 
-.tag-list,
+
+.selected-tags {
+  margin: 10px 0; /* 可以根据需要调整外边距 */
+}
+
+.tag-list {
+  display: flex; /* 启用 Flexbox */
+  flex-wrap: wrap; /* 允许换行 */
+  gap: 10px; /* 标签之间的间隔，可以根据需要调整 */
+}
+
+.tag-list .el-tag {
+  margin-bottom: 10px; /* 标签底部的间隔 */
+}
 .tag-buttons {
   flex-wrap: wrap; /* 支持换行 */
   gap: 8px; /* 元素之间的间距 */

@@ -38,8 +38,8 @@
                 {{ tag }}
               </el-tag>
               <div class="action-button">
-                <el-button type="text" @click="someAction(row.id)">下载</el-button>
-                <el-button type="text" @click="someAction(row.id)">删除</el-button>
+                <el-button type="text" @click="downLoadAction(row.id)">下载</el-button>
+                <el-button type="text" @click="deleteAction(row.id)">删除</el-button>
               </div>
             </div>
           </template>
@@ -73,7 +73,12 @@ const uploadFile = () => {
 const someAction = (id) => {
   alert(`操作文件ID: ${id}`);
 };
+const downLoadAction = (id) =>{
+  
+};
+const deleteAction = (id) =>{
 
+};
 const shareFile = () => {
   router.push({ name: 'share' });
 };

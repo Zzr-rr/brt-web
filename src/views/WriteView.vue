@@ -106,7 +106,7 @@ function submitArticle() {
     ElMessage.error('至少添加一个标签');
     return;
   }
-  ElMessage.success('你母没了');
+  ElMessage.success('成功添加');
   console.log('文章内容:', article.value);
 }
 </script>
