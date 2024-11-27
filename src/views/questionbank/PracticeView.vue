@@ -17,8 +17,10 @@
           <div class="question-content">
             <h3>{{ index + 1 }}. {{ question.content }}</h3>
             
-            <template v-if="question.questionType === '选择题'">
-              <el-radio-group v-model="selectedAnswers[question.id]" >
+            <template v-if="question.questionType === '选择题'" >
+              <el-radio-group v-model="selectedAnswers[question.id]" 
+              :disabled="!Iswrittable"
+              >
                 <el-radio :value="'A'">A.{{ question.optionA }}</el-radio>
                 <el-radio :value="'B'">B.{{ question.optionB }}</el-radio>
                 <el-radio :value="'C'">C.{{ question.optionC }}</el-radio>
@@ -27,18 +29,24 @@
             </template>
 
             <template v-else-if="question.questionType === '判断题'">
-              <el-radio-group v-model="selectedAnswers[question.id]" :direction="isVertical ? 'vertical' : 'horizontal'">
+              <el-radio-group v-model="selectedAnswers[question.id]" :direction="isVertical ? 'vertical' : 'horizontal'"
+              :disabled="!Iswrittable"
+              >
                 <el-radio :value="'true'">正确</el-radio>
                 <el-radio :value="'false'">错误</el-radio>
               </el-radio-group>
             </template>
 
             <template v-else-if="question.questionType === '简答题'">
-              <el-input v-model="selectedAnswers[question.id]" type="textarea" :rows="3" placeholder="请输入简答题答案" />
+              <el-input v-model="selectedAnswers[question.id]" type="textarea" :rows="3" placeholder="请输入简答题答案" 
+              :disabled="!Iswrittable"
+               />
             </template>
 
             <template v-else-if="question.questionType === '填空题'">
-              <el-input v-model="selectedAnswers[question.id]" placeholder="请输入填空题答案" />
+              <el-input v-model="selectedAnswers[question.id]" placeholder="请输入填空题答案" 
+              :disabled="!Iswrittable"
+              />
             </template>
 
            
@@ -151,6 +159,7 @@ export default {
       currentQuestionIndex: 0,
       totalScore: 0,
       isSubmitting: false,
+      Iswrittable:true,
     };
   },
   computed: {
@@ -172,7 +181,7 @@ export default {
       let score = 0;
       
       this.isSubmitting = true;
-      
+      this.Iswrittable=false;
       // 计算总得分
       for (const question of this.questions) {
         const userAnswer = this.selectedAnswers[question.id];
@@ -184,7 +193,7 @@ export default {
       }
       this.totalScore = score;
       
-     
+      
       const message = `你选择了 ${totalCount} 道题，答对了 ${correctCount} 道题。总得分：${this.totalScore} 分。`;
 
       ElMessageBox.alert(message, "考试结束啦>_<", {
