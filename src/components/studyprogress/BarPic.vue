@@ -23,10 +23,9 @@ let myChart = null;
 // 更新图表的配置和数据
 const updateChart = () => {
   if (myChart) {
-    const subjects = props.databank.map(item => item.name);  // 科目名称
-    const totalData = props.databank.map(item => item.value);  // 每天总的做题量
-    const correctData = props.databank.map(item => item.correct); // 正确题数
-    const errorData = props.databank.map(item => item.error); // 错误题数
+    const subjects = props.databank.map(item => item.name);  
+    const correctData = props.databank.map(item => item.correct); 
+    const errorData = props.databank.map(item => item.error); 
 
     const option = {
       title: {

@@ -6,7 +6,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import Chart from "@/components/studyprogress/ChartPic.vue"; // 引入Chart组件
-import Bar from "@/components/studyprogress/bar.vue"
+import Bar from "@/components/studyprogress/BarPic.vue"
 // 数据
 const databank = [
   { value: 50, correct: 20, error: 30, name: "高等数学" },
