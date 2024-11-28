@@ -1,5 +1,5 @@
 <template>
-  <el-card :body-style="{ padding: '20px' }" class="custom-card">
+  <el-card :body-style="{ padding: '20px' }" class="custom-card" >
     <div ref="chartContainer" style="width: 600px; height: 300px"></div>
   </el-card>
 </template>
@@ -127,8 +127,9 @@ watch(
 
 <style scoped>
 .custom-card {
-  position: absolute;
+  position: sticky;
   padding: 10px;
+  width: 650px; height: 350px;
   border-radius: 2%;
   color: white;
   font-size: 24px;

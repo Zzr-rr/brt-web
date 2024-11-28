@@ -1,6 +1,8 @@
 <template>
-  <!-- <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" /> -->
+  <div class="picsort">
+  <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
   <Bar :databank="databank"/>
+  </div>
 </template>
 
 <script setup>
@@ -36,12 +38,11 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.custom-card {
-  position: absolute;
-  padding: 10px;
-  border-radius: 2%;
-  color: white;
-  font-size: 24px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+
+.picsort {
+  display: flex;           
+  justify-content: space-between; 
+  align-items: center;   
+  gap: 20px; 
+}              
 </style>

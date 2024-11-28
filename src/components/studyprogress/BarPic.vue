@@ -81,17 +81,17 @@ const updateChart = () => {
           itemStyle: {
             color: '#34D160' // 绿色
           },
-          barWidth: 30,
+          barWidth: 50,
         },
         {
-          name: '错误',
+          name: '错误/未完成',
           type: 'bar',
           stack: 'total',  // 堆叠的标识
           data: errorData,  // 错误题数
           itemStyle: {
             color: '#FF6A6A' // 红色
           },
-          barWidth: 30,  // 柱子宽度
+          barWidth: 50,  // 柱子宽度
         },
         // {
         //   name: '总量',
@@ -124,11 +124,12 @@ onMounted(() => {
 
 <style scoped>
 .custom-card {
-  position: relative;
-  border: 2px solid #00B0FF;
-  border-radius: 8px;
-  overflow: hidden;
+  position: sticky;
   padding: 10px;
+  width: 450px; height: 350px;
+  border-radius: 2%;
   color: white;
+  font-size: 24px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
