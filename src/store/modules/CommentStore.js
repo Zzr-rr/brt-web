@@ -6,7 +6,7 @@ import authApi from '@/api/auth';
 export const useItemStore = defineStore('itemStore', {
   state: () => ({
     item: null,
-    newComment: '',
+    newComment: '1',
   }),
   
   actions: {
@@ -20,7 +20,10 @@ export const useItemStore = defineStore('itemStore', {
     // 添加评论
     addComment() {
       if (this.newComment.trim()) {
-        this.item.commentslist.push({
+        if (!this.item.commentsList) {
+          this.item.commentsList = [];
+        }
+        this.item.commentsList.push({
           critic: 'Guest',
           content: this.newComment,
           avatarUrl: 'https://randomuser.me/api/portraits/lego/2.jpg',

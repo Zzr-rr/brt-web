@@ -1,3 +1,5 @@
+import { componentSizeMap } from "element-plus";
+
 const routes = [
   {
     path: "/:catchAll(.*)",
@@ -59,6 +61,11 @@ const routes = [
         name: "square",
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
+      {
+        path: "practice",
+        name: "practice",
+        component: () => import("@/views/questionbank/PracticeView.vue"),
+      },
     ],
   },
   {
@@ -69,12 +76,18 @@ const routes = [
         path: "myfile",
         name: "myfile",
         component: () => import("@/views/file/MyfileView.vue"),
+        
       },
       {
         path: "upload",
         name: "upload",
         component: () => import("@/views/file/UploadView.vue"),
       },
+      {
+        path:"myfile/share",
+        name:"share",
+        component:()=>import("@/views/WriteView.vue")
+      }
     ],
   },
 ];
