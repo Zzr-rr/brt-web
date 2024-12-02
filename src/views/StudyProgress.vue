@@ -10,7 +10,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import Chart from "@/components/studyprogress/ChartPic.vue"; // 引入Chart组件
+import Chart from "@/components/studyprogress/ChartPic.vue";
 import Bar from "@/components/studyprogress/BarPic.vue"
 import StudyList from "@/components/studyprogress/StudyList.vue";
 import WrongList from "@/components/studyprogress/WrongList.vue";
