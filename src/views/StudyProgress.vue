@@ -2,6 +2,7 @@
   <div class="picsort">
   <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
   <study-list :databank="databank"/>
+  <WrongList :errorQuestions="errorQuestions" />
   <Bar :databank="databank"/>
   
   </div>
@@ -12,12 +13,34 @@ import { ref, onMounted } from "vue";
 import Chart from "@/components/studyprogress/ChartPic.vue"; // 引入Chart组件
 import Bar from "@/components/studyprogress/BarPic.vue"
 import StudyList from "@/components/studyprogress/StudyList.vue";
+import WrongList from "@/components/studyprogress/WrongList.vue";
 // 数据
 const databank = [
   { value: 50, correct: 20, error: 30, name: "高等数学" ,tag: ['极限', '微积分']},
   { value: 70, correct: 60, error: 10, name: "线性代数" ,tag: ['整数的加减乘除'],},
   { value: 1000, correct: 200, error: 800, name: "元素反应",tag:['感电', '过载']},
 ];
+const errorQuestions = [
+  {
+    name: "题目1",
+    tag: "线性代数",
+    difficulty: "简单",
+    solvePercentage: 80,
+  },
+  {
+    name: "题目2",
+    tag: "高等数学",
+    difficulty: "中等",
+    solvePercentage: 100,
+  },
+  {
+    name: "题目3",
+    tag: "元素反应",
+    difficulty: "困难",
+    solvePercentage: 40,
+  },
+];
+
 
 // 定义响应式数据
 const totalCorrect = ref(0);
