@@ -1,6 +1,6 @@
 // store/itemStore.js
 import { defineStore } from 'pinia';
-import { ItemList as CardItemData } from '@/assets/data/Homeitem';
+import { ItemList as CardItemData } from '@/assets/data/MyBank';
 import authApi from '@/api/auth';
 
 export const useItemStore = defineStore('itemStore', {
