@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PractiveHeadbar :questions="questions" @scroll-to-question="scrollToQuestion"/>
+    <PractiveHeadbar :questions="questions" @scroll-to-question="scrollToQuestion" :results="results"/>
   </div>
   <div>
     <el-header>
@@ -78,6 +78,7 @@ export default {
   },
   data() {
     return {
+      results: [], // 用来存储答案结果
       questions: [
         {
           id: 1,
@@ -165,32 +166,41 @@ export default {
     
     // 提交答卷
     onSubmit() {
-      let totalCount = Object.keys(this.selectedAnswers).length;
-      let correctCount = 0;
-      let score = 0;
-      
-      this.isSubmitting = true;
-      this.Iswrittable = false;
+    let totalCount = Object.keys(this.selectedAnswers).length;
+    let correctCount = 0;
+    let score = 0;
+    const result = [];
 
-      // 计算总得分
-      for (const question of this.questions) {
-        const userAnswer = this.selectedAnswers[question.id];
-        if (userAnswer === question.answer) {
-          correctCount++;
-          score += question.score;
-        }
-        this.showAnswer[question.id] = true;
+    this.isSubmitting = true;
+    this.Iswrittable = false;
+
+    // Calculate total score and prepare result to pass to child component
+    for (const question of this.questions) {
+      const userAnswer = this.selectedAnswers[question.id];
+      const isCorrect = userAnswer === question.answer;
+      if (isCorrect) {
+        correctCount++;
+        score += question.score;
       }
-      this.totalScore = score;
-      
-      const message = `你选择了 ${totalCount} 道题，答对了 ${correctCount} 道题。总得分：${this.totalScore} 分。`;
-
-      ElMessageBox.alert(message, "考试结束啦>_<", {
-        confirmButtonText: '确定',
-      }).then(() => {
-        this.isSubmitting = false;
+      this.showAnswer[question.id] = true;
+      result.push({
+        questionId: question.id,
+        isCorrect: isCorrect, // correct or incorrect answer
       });
-    },
+    }
+    this.totalScore = score;
+    
+    // Emit the results to the child component
+    this.results = result;  
+
+    const message = `你选择了 ${totalCount} 道题，答对了 ${correctCount} 道题。总得分：${this.totalScore} 分。`;
+
+    ElMessageBox.alert(message, "考试结束啦>_<", {
+      confirmButtonText: '确定',
+    }).then(() => {
+      this.isSubmitting = false;
+    });
+  },
     
     // 滚动到指定问题
     scrollToQuestion(id) {
