@@ -8,7 +8,7 @@
           :key="item.id"
           type="primary"
           size="small"
-          @click="scrollToQuestion(id)"
+          @click="scrollToQuestion(item.id)"
         :class="item.Isdone?'done':'pending'"
         >
           {{ item.id }}
@@ -27,12 +27,14 @@ export default {
     },
   },
   methods: {
+    
     scrollToQuestion(id) {
-      const element = document.getElementById(id);
+      this.$emit('scroll-to-question', id);  // emit事件
+      // const element = document.getElementById(id);
       
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+      // if (element) {
+      //   element.scrollIntoView({ behavior: "smooth" });
+      // }
     },
   },
 };
