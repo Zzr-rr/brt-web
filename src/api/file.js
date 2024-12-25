@@ -1,10 +1,13 @@
-const { default: axios } = require("axios")
+import axios from "@/api/axois";
 
 const fileApi={
-    downLoad(params){
-        return axios.post("file/download")
-    },
     delete(params){
-        return axios.post("file/delete")
-    }
+        return axios.post("brt/file/delete",params)
+    },
+    getFileList() {
+        const body={};
+        return axios.post('/brt/file/list/personal',body);  // 假设这是获取文件列表的接口
+    },
 };
+
+export default fileApi;

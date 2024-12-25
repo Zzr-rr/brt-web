@@ -40,45 +40,43 @@
               placeholder="请输入文件名称"
             ></el-input>
           </el-form-item>
-            <div class="tag-input-container">
-              <el-input
-                v-model="newTag"
-                placeholder="输入标签后按 Enter 添加"
-                @keyup.enter="addTag"
-              ></el-input>
-            </div>
+          <div class="tag-input-container">
+            <el-input
+              v-model="newTag"
+              placeholder="输入标签后按 Enter 添加"
+              @keyup.enter="addTag"
+            ></el-input>
+          </div>
 
-            <div class="selected-tags">
-              <span>已选标签：</span>
-              <div class="tag-list">
-                <el-tag
-                  v-for="(tag, index) in form.selectedTags"
-                  :key="index"
-                  closable
-                  @close="removeTag(tag)"
-                >
-                  {{ tag }}
-                </el-tag>
-              </div>
+          <div class="selected-tags">
+            <span>已选标签：</span>
+            <div class="tag-list">
+              <el-tag
+                v-for="(tag, index) in form.selectedTags"
+                :key="index"
+                closable
+                @close="removeTag(tag)"
+              >
+                {{ tag }}
+              </el-tag>
             </div>
+          </div>
 
-            <!-- 可选标签 -->
-            <div class="available-tags">
-              <span>可选标签：</span>
-              <div class="tag-buttons">
-                <el-button
-                  v-for="tag in availableTags"
-                  :key="tag"
-                  size="mini"
-                  :type="
-                    form.selectedTags.includes(tag) ? 'primary' : 'default'
-                  "
-                  @click="toggleTag(tag)"
-                >
-                  {{ tag }}
-                </el-button>
-              </div>
+          <!-- 可选标签 -->
+          <div class="available-tags">
+            <span>可选标签：</span>
+            <div class="tag-buttons">
+              <el-button
+                v-for="tag in availableTags"
+                :key="tag"
+                size="mini"
+                :type="form.selectedTags.includes(tag) ? 'primary' : 'default'"
+                @click="toggleTag(tag)"
+              >
+                {{ tag }}
+              </el-button>
             </div>
+          </div>
         </el-form>
         <template #footer>
           <el-button @click="closeForm">取消</el-button>
@@ -89,125 +87,116 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      selectedFile: null,
-      fileName: "",
-      isFormVisible: false, // 确保默认值为 false
-      form: {
-        customName: "",
-        selectedTags: [],
-      },
-      availableTags: ["数学", "物理", "化学", "生物", "英语", "历史"],
-      formLabelWidth: "",
-      tagError: false,
-      newTag: "",
-      maxTags: 7, // 最大标签数量
-    };
-  },
-  methods: {
-    handleFileUpload(event) {
-      this.selectedFile = event.target.files[0];
-      if (this.selectedFile) {
-        const validTypes = [
-          "application/pdf",
-          "application/msword",
-          "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "text/plain",
-        ];
-        if (!validTypes.includes(this.selectedFile.type)) {
-          this.$message.error(
-            "不支持的文件类型。请上传PDF、DOC、DOCX或TXT文件。"
-          );
-          this.resetFile();
-          return;
-        }
-        if (this.selectedFile.size > 5 * 1024 * 1024) {
-          this.$message.error("文件大小不能超过5MB");
-          this.resetFile();
-          return;
-        }
-        this.fileName = this.selectedFile.name;
-        this.form.customName = this.fileName;
-      }
-    },
-    resetFile() {
-      this.selectedFile = null;
-      this.fileName = "";
-      this.form.customName = "";
-    },
-    triggerFileInput() {
-      if (this.$refs.fileInput) {
-        this.$refs.fileInput.click();
-      } else {
-        console.error("文件输入框未正确绑定 ref");
-      }
-    },
-    showForm() {
-      if (this.selectedFile) {
-        this.isFormVisible = true; // 打开弹窗
-      } else {
-        this.$message.error("请先选择文件！");
-      }
-    },
-    closeForm() {
-      this.isFormVisible = false; // 关闭弹窗
-      this.form.selectedTags = [];
-      this.tagError = false;
-    },
-    submitForm() {
-      if (this.form.selectedTags.length === 0) {
-        this.tagError = true;
-        this.$nextTick(() => {
-          this.$message.error("请至少选择一个标签！");
-        });
-        return;
-      }
-      this.tagError = false;
+<script setup>
+import { ref } from 'vue';
 
-      const formData = new FormData();
-      formData.append("file", this.selectedFile);
-      formData.append("name", this.form.customName);
-      formData.append("tags", this.form.selectedTags.join(","));
+const selectedFile = ref(null);
+const fileName = ref("");
+const isFormVisible = ref(false);
+const form = ref({
+  customName: "",
+  selectedTags: [],
+});
+const availableTags = ref(["数学", "物理", "化学", "生物", "英语", "历史"]);
+const newTag = ref("");
+const maxTags = 7; // 最大标签数量
 
-      fetch("YOUR_BACKEND_API_URL", {
-        method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          this.$message.success("文件上传成功");
-          this.closeForm();
-          this.resetFile();
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          this.$message.error("文件上传失败");
-        });
-    },
-    addTag() {
-      if (
-        this.newTag &&
-        !this.form.selectedTags.includes(this.newTag) &&
-        this.form.selectedTags.length < this.maxTags
-      ) {
-        this.form.selectedTags.push(this.newTag);
-      }
-      this.newTag = "";
-    },
-    removeTag(tag) {
-      this.form.selectedTags = this.form.selectedTags.filter((t) => t !== tag);
-    },
-    toggleTag(tag) {
-      if (this.form.selectedTags.includes(tag)) {
-        this.removeTag(tag);
-      } else if (this.form.selectedTags.length < this.maxTags) {
-        this.form.selectedTags.push(tag);
-      }
-    },
-  },
+const handleFileUpload = (event) => {
+  selectedFile.value = event.target.files[0];
+  if (selectedFile.value) {
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
+    if (!validTypes.includes(selectedFile.value.type)) {
+      this.$message.error(
+        "不支持的文件类型。请上传PDF、DOC、DOCX或TXT文件。"
+      );
+      resetFile();
+      return;
+    }
+    if (selectedFile.value.size > 5 * 1024 * 1024) {
+      this.$message.error("文件大小不能超过5MB");
+      resetFile();
+      return;
+    }
+    fileName.value = selectedFile.value.name;
+    form.value.customName = fileName.value;
+  }
+};
+
+const resetFile = () => {
+  selectedFile.value = null;
+  fileName.value = "";
+  form.value.customName = "";
+};
+
+const triggerFileInput = () => {
+  const fileInput = document.querySelector('input[type="file"]');
+  if (fileInput) {
+    fileInput.click();
+  }
+};
+
+const showForm = () => {
+  if (selectedFile.value) {
+    isFormVisible.value = true; // 打开弹窗
+  } else {
+    this.$message.error("请先选择文件！");
+  }
+};
+
+const closeForm = () => {
+  isFormVisible.value = false; // 关闭弹窗
+  form.value.selectedTags = [];
+};
+
+const submitForm = () => {
+  if (form.value.selectedTags.length === 0) {
+    this.$message.error("请至少选择一个标签！");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", selectedFile.value);
+  formData.append("name", form.value.customName);
+  formData.append("tags", form.value.selectedTags.join(","));
+
+  fetch("YOUR_BACKEND_API_URL", {
+    method: "POST",
+    body: formData,
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      this.$message.success("文件上传成功");
+      closeForm();
+      resetFile();
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      this.$message.error("文件上传失败");
+    });
+};
+
+const addTag = () => {
+  if (newTag.value && !form.value.selectedTags.includes(newTag.value) && form.value.selectedTags.length < maxTags) {
+    form.value.selectedTags.push(newTag.value);
+  }
+  newTag.value = "";
+};
+
+const removeTag = (tag) => {
+  form.value.selectedTags = form.value.selectedTags.filter(t => t !== tag);
+};
+
+const toggleTag = (tag) => {
+  if (form.value.selectedTags.includes(tag)) {
+    removeTag(tag);
+  } else if (form.value.selectedTags.length < maxTags) {
+    form.value.selectedTags.push(tag);
+  }
 };
 </script>
 

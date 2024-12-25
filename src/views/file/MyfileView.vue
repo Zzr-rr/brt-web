@@ -1,5 +1,5 @@
 <template>
-  <el-container class="file-list-container" >
+  <el-container class="file-list-container">
     <!-- 控制按钮 -->
     <el-header class="file-controls">
       <el-button type="primary" icon="Upload" @click="uploadFile">上传</el-button>
@@ -7,11 +7,11 @@
       <el-button type="success" icon="Share" @click="shareFile">分享</el-button>
       <el-button type="success" icon="Generate" @click="generateQuestionBank">生成题库</el-button>
     </el-header>
-
     <!-- 文件列表 -->
-    <el-main >
+     
+    <el-main>
       <el-table
-        :data="files"
+        :data="transformedFiles"
         size="large"
         class="file"
         stripe
@@ -20,10 +20,8 @@
         @selection-change="handleSelectionChange"
         ref="multipleTable"
       >
-        <el-table-column
-          type="selection"
-          width="55">
-        </el-table-column>
+
+        <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="name" label="文件名" width="200"></el-table-column>
         <el-table-column prop="modified" label="最近使用时间"></el-table-column>
         <el-table-column label="标签">
@@ -38,47 +36,54 @@
                 {{ tag }}
               </el-tag>
               <div class="action-button">
-                <el-button type="text" @click="downLoadAction(row.id)">下载</el-button>
-                <el-button type="text" @click="deleteAction(row.id)">删除</el-button>
+                <a :href="`/api${row.fileUrl}`" download><el-button type="link" @click="downLoadAction">下载</el-button></a>
+                <el-button type="link" @click="deleteAction(row.id)">删除</el-button>
               </div>
             </div>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="generated" label="是否生成题库"></el-table-column> -->
       </el-table>
     </el-main>
   </el-container>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
+import fileApi from '@/api/file'; // 确保路径正确
+import axios from 'axios';
 
-const router = useRouter();
-const files = ref([
-  { id: 1, name: '高等数学', modified: '2024-09-25 19:42', tag: ['极限', '微积分'], generated: '是' },
-  { id: 2, name: '低等数学', modified: '2024-09-04 13:41', tag: ['整数的加减乘除'], generated: '是' },
-  { id: 3, name: '中等数学', modified: '2024-08-27 20:15', tag: ['求导'], generated: '否' },
-  { id: 4, name: 'AIERDENG', modified: '2024-07-01 21:48', tag: [], generated: '否' },
-  { id: 5, name: '高等元素反应', modified: '2024-05-30 11:54', tag: ['感电', '过载'], generated: '是' },
-  // 可以继续添加其他文件信息
-]);
+const files = ref([]);
+const transformedFiles = ref([]);
 const selectedFiles = ref([]);
+const router = useRouter();
 
 const uploadFile = () => {
   router.push({ name: 'upload' });
 };
 
-const someAction = (id) => {
-  alert(`操作文件ID: ${id}`);
+const downLoadAction = () => {
+  alert('开始下载');
 };
-const downLoadAction = (id) =>{
-  
-};
-const deleteAction = (id) =>{
 
+const deleteAction = async (id) => {
+  if (confirm("确定要删除这个文件吗？")) {
+    try {
+      const response = await fileApi.delete({ fileId: id }); // 传递文件 ID 作为参数
+      if (response.code === 200) {
+        alert('文件删除成功');
+        await loadFiles(); // 重新加载文件列表
+      } else {
+        alert(response.data.message || '删除文件失败');
+      }
+    } catch (error) {
+      console.error("删除文件时发生错误:", error);
+      alert('发生错误，删除文件失败');
+    }
+  }
 };
+
 const shareFile = () => {
   router.push({ name: 'share' });
 };
@@ -95,6 +100,39 @@ const generateQuestionBank = () => {
 const handleSelectionChange = (val) => {
   selectedFiles.value = val;
 };
+
+// 加载文件列表
+const loadFiles = async () => {
+  try {
+    const response = await fileApi.getFileList();
+    if (response.code === 200) {
+      files.value = response.data; // 更新原始 files 变量
+      console.log(response.data);
+      transformFiles(); // 确保调用 transformFiles 函数
+    } else {
+      alert(response.data.message || '加载文件列表失败');
+    }
+  } catch (error) {
+    console.error("Failed to load files:", error);
+    alert('加载文件列表时发生错误');
+  }
+};
+
+// 数据转换函数
+const transformFiles = () => {
+  transformedFiles.value = files.value.map(file => {
+    return {
+      id: file.fileId,
+      name: file.fileName,
+      modified: file.createdAt, // 或者选择 updatedAt
+      tag: JSON.parse(file.keywords), // 将 JSON 字符串转换为数组
+      fileUrl: file.fileUrl // 添加文件下载 URL
+    };
+  });
+};
+
+// 组件挂载时加载文件列表
+onMounted(loadFiles);
 </script>
 
 <style scoped>
