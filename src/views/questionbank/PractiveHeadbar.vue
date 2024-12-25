@@ -6,9 +6,15 @@
         <el-button
           v-for="item in questions"
           :key="item.id"
-          type="primary"
+          :type="
+            resultMap[item.id] !== undefined
+              ? resultMap[item.id]
+                ? 'success'
+                : 'danger'
+              : 'primary'
+          "
           size="small"
-          @click="scrollToQuestion(id)"
+          @click="scrollToQuestion(item.id)"
         :class="item.Isdone?'done':'pending'"
         >
           {{ item.id }}
@@ -25,17 +31,35 @@ export default {
       type: Array,
       required: true,
     },
-  },
-  methods: {
-    scrollToQuestion(id) {
-      const element = document.getElementById(id);
-      
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
+    results: {
+      type: Array,
+      default: () => [],
     },
   },
-};
+  computed: {
+    // Create a map for quick lookup of answers
+    resultMap() {
+      console.log(this.results);
+      return this.results.reduce((acc, result) => {
+        acc[result.questionId] = result.isCorrect;
+        return acc;
+      }, {});
+    },
+  },
+  methods: {
+    // Scroll to a specific question
+    scrollToQuestion(id) {
+      this.$emit('scroll-to-question', id);
+    },
+  },
+  watch: {
+    // Watch for changes to results to trigger re-rendering of buttons
+    results(newResults) {
+      this.resultMap = newResults;
+    },
+  },
+}
+
 </script>
 
 <style scoped>
