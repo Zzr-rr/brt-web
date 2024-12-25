@@ -59,13 +59,9 @@ const transformedFiles = ref([]);
 const selectedFiles = ref([]);
 const router = useRouter();
 
-      <el-form-item label="题库描述" :label-width="formLabelWidth">  
-        <el-input  
-          type="textarea"  
-          v-model="form.description"  
-          placeholder="请输入题库描述"  
-        ></el-input>  
-      </el-form-item>  
+const uploadFile = () => {
+  router.push({ name: 'upload' });
+};
 
 const downLoadAction = () => {
   alert('开始下载');
@@ -92,10 +88,14 @@ const shareFile = () => {
   router.push({ name: 'share' });
 };
 
-<script setup>  
-import { ref } from 'vue';  
-import { useRouter } from 'vue-router';  
-import 'element-plus/dist/index.css';  
+const generateQuestionBank = () => {
+  if (selectedFiles.value.length === 0) {
+    alert('请至少选择一个文件');
+  } else {
+    const fileIds = selectedFiles.value.map(file => file.id);
+    router.push({ name: 'generate', params: { fileIds } });
+  }
+};
 
 const handleSelectionChange = (val) => {
   selectedFiles.value = val;
@@ -135,166 +135,37 @@ const transformFiles = () => {
 onMounted(loadFiles);
 </script>
 
-const uploadFile = () => {  
-  router.push({ name: 'upload' });  
-};  
-
-const someAction = (id) => {  
-  alert(`操作文件ID: ${id}`);  
-};  
-
-const shareFile = () => {  
-  router.push({ name: 'share' });  
-};  
-
-const generateQuestionBank = () => {  
-  if (!selectedFile.value) {  
-    alert('请先选择文件！');  
-  } else {  
-    form.value.selectedTags = selectedFile.value.tag.slice(); // 复制当前文件的标签  
-    isFormVisible.value = true;  
-  }  
-};  
-
-const handleSelectionChange = (val) => {  
-  selectedFiles.value = val;  
-  if (val.length > 0) {  
-    selectedFile.value = val[0];  
-  } else {  
-    selectedFile.value = null;  
-  }  
-};  
-
-const handleCoverImageChange = (event) => {  
-  const file = event.target.files[0];  
-  if (file && file.type.startsWith('image/')) {  
-    if (file.size <= 1024 * 1024) { // 限制图片大小为1MB  
-      form.value.coverImage = file;  
-      const reader = new FileReader();  
-      reader.onload = (e) => {  
-        form.value.coverImagePreview = e.target.result;  
-      };  
-      reader.readAsDataURL(file);  
-    } else {  
-      alert('图片文件大小不能超过1MB！');  
-      event.target.value = ''; // 清空选择  
-    }  
-  } else {  
-    alert('请选择图片文件！');  
-    event.target.value = ''; // 清空选择  
-  }  
-};  
-
-const addTag = () => {  
-  if (newTag.value.trim()) {  
-    if (!form.value.selectedTags.includes(newTag.value)) {  
-      form.value.selectedTags.push(newTag.value.trim());  
-    } else {  
-      alert('该标签已存在！');  
-    }  
-    newTag.value = ''; // 清空输入框  
-  } else {  
-    alert('请输入有效的标签！');  
-  }  
-};  
-
-const removeTag = (tag) => {  
-  const index = form.value.selectedTags.indexOf(tag);  
-  if (index !== -1) {  
-    form.value.selectedTags.splice(index, 1);  
-  }  
-};  
-
-const closeForm = () => {  
-  isFormVisible.value = false;  
-  form.value = {  
-    customName: '',  
-    description: '',  
-    coverImage: null,  
-    coverImagePreview: null,  
-    selectedTags: [],  
-  };  
-  newTag.value = '';  
-};  
-
-const submitForm = () => {  
-  if (!form.value.coverImage) {  
-    alert('请上传封面图片');  
-    return;  
-  }  
-  // 这里可以添加提交表单的逻辑  
-  console.log('提交的表单数据:', form.value);  
-  isFormVisible.value = false; // 只有在确认时才关闭窗口  
-};  
-</script>  
-
-<style scoped>  
-.file {  
-  color: #444444;  
-  font-family: 'Microsoft YaHei', sans-serif;  
-  font-size: 13px;  
-  width: 100%;  
-}  
-.file-list-container {  
-  width: 100%;  
-  margin: auto;  
-  margin-top: 20px;  
-}  
-.file-controls {  
-  display: flex;  
-  gap: 10px;  
-  justify-content: flex-start;  
-  padding-bottom: 20px;  
-}  
-.tag-container {  
-  display: flex;  
-  gap: 8px;  
-  align-items: center;  
-}  
-.file-tag {  
-  font-size: 12px;  
-}  
-.action-button {  
-  display: none;  
-}  
-.el-table__body tr:hover .action-button {  
-  display: inline-block;  
-  position: absolute;  
-  left: -260px;  
-}  
-.image-preview-container {  
-  display: flex;  
-  justify-content: center; /* 水平居中对齐 */  
-  align-items: center; /* 垂直居中对齐 */  
-  flex-direction: column; /* 竖向排列容器内的元素 */  
-  width: 200px; /* 设置固定宽度 */  
-  height: 200px; /* 设置固定高度 */  
-  border: 1px solid #ccc; /* 添加边框 */  
-  margin: 0 auto 10px; /* 水平居中，底部间距为10px */  
-  overflow: hidden; /* 隐藏溢出部分 */  
-  position: relative; /* 为绝对定位提供参考 */  
-}  
-
-.preview-image {  
-  max-width: 100%; /* 最大宽度为容器的100% */  
-  max-height: 100%; /* 最大高度为容器的100% */  
-  object-fit: cover;
-}  
-
-.description {  
-  position: absolute; /* 绝对定位 */  
-  bottom: -30px; /* 存在于容器下方，可以根据需要调整这个值 */  
-  left: 50%;  
-  transform: translateX(-50%); /* 水平居中 */  
-  width: 300px; /* 描述的宽度 */  
-  text-align: center; /* 描述文本居中 */  
-  margin-top: 10px; /* 描述离方框的额外间距 */  
+<style scoped>
+.file {
+  color: #444444;
+  font-family: 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  width: 100%;
 }
-.name {
-    position: absolute;
-    top: -30px; /* 根据需要调整，使其位于图片方框上方 */
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px; /* 与图片方框相同的宽度 */
+.file-list-container {
+  width: 100%;
+  margin: auto;
+  margin-top: 20px;
+}
+.file-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+  padding-bottom: 20px;
+}
+.tag-container {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.file-tag {
+  font-size: 12px;
+}
+.action-button {
+  display: none;
+}
+.el-table__body tr:hover .action-button {
+  display: inline-block;
+  left: -260px;
 }
 </style>
