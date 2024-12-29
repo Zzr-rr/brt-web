@@ -59,7 +59,13 @@
 import { computed } from "vue";
 import "element-plus/dist/index.css";
 import { ElIcon } from "element-plus";
-
+import userQuestionProgressApi from "@/api/userQuestionProgress";
+// const requestParam={};
+// const res = await userQuestionProgressApi.getQuestionProgressList(requestParam);
+//                             if (res?.code == 200) {
+//                                 console.log("1");
+//                                 console.log(res.data);
+//                             }
 // 定义props，接收错题数据
 const props = defineProps({
   errorQuestions: {

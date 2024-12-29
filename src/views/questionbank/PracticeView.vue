@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PractiveHeadbar :questions="questions" @scroll-to-question="scrollToQuestion"/>
+    <PractiveHeadbar :questions="questions" @scroll-to-question="scrollToQuestion"/><!--未传入-->
   </div>
   <div>
     <el-header>
@@ -9,43 +9,84 @@
 
     <el-main>
       <div v-if="questions.length > 0">
-        <el-card v-for="(question, index) in questions" :key="question.id" 
-                 :id="'question-' + question.id" class="question-card"
-                 @change="QuestionDone(question)" :style="{ margin: '10px' }">
+        <el-card
+          v-for="(question, index) in questions"
+          :key="question.questionId"
+          :id="'question-' + question.questionId"
+          class="question-card"
+          @change="QuestionDone(question)"
+          :style="{ margin: '10px' }"
+        >
           <div class="question-content">
-            <h3>{{ index + 1 }}. {{ question.content }}</h3>
+            <h3>{{ index + 1 }}. {{ question.questionText }}</h3>
 
             <!-- 选择题 -->
-            <template v-if="question.questionType === '选择题'">
-              <el-radio-group v-model="selectedAnswers[question.id]" :disabled="!Iswrittable">
-                <el-radio :value="'A'">A.{{ question.optionA }}</el-radio>
-                <el-radio :value="'B'">B.{{ question.optionB }}</el-radio>
-                <el-radio :value="'C'">C.{{ question.optionC }}</el-radio>
-                <el-radio :value="'D'">D.{{ question.optionD }}</el-radio>
+            <template v-if="question.questionType === 'SINGLE_CHOICE'">
+              <el-radio-group
+                v-model="selectedAnswers[question.questionId]"
+                :disabled="!Iswrittable"
+              >
+                <el-radio :value="'A'">A.{{ question.options[0] }}</el-radio>
+                <el-radio :value="'B'">B.{{ question.options[1] }}</el-radio>
+                <el-radio :value="'C'">C.{{ question.options[2] }}</el-radio>
+                <el-radio :value="'D'">D.{{ question.options[3] }}</el-radio>
               </el-radio-group>
             </template>
-
+            <!--多选题-->
+            <template v-if="question.questionType === 'MULTIPLE_CHOICE'">
+              <el-checkbox-group
+                v-model="selectedAnswers[question.questionId]"
+                :disabled="!Iswrittable"
+              >
+                <el-checkbox :label="'A'"
+                  >A.{{ question.options[0] }}</el-checkbox
+                >
+                <el-checkbox :label="'B'"
+                  >B.{{ question.options[1] }}</el-checkbox
+                >
+                <el-checkbox :label="'C'"
+                  >C.{{ question.options[2] }}</el-checkbox
+                >
+                <el-checkbox :label="'D'"
+                  >D.{{ question.options[3] }}</el-checkbox
+                >
+              </el-checkbox-group>
+            </template>
             <!-- 判断题 -->
-            <template v-else-if="question.questionType === '判断题'">
-              <el-radio-group v-model="selectedAnswers[question.id]" :direction="isVertical ? 'vertical' : 'horizontal'" :disabled="!Iswrittable">
+            <!-- <template v-else-if="question.questionType === '判断题'">
+              <el-radio-group
+                v-model="selectedAnswers[question.questionId]"
+                :direction="isVertical ? 'vertical' : 'horizontal'"
+                :disabled="!Iswrittable"
+              >
                 <el-radio :value="'true'">正确</el-radio>
                 <el-radio :value="'false'">错误</el-radio>
               </el-radio-group>
-            </template>
+            </template> -->
 
             <!-- 简答题 -->
-            <template v-else-if="question.questionType === '简答题'">
-              <el-input v-model="selectedAnswers[question.id]" type="textarea" :rows="3" placeholder="请输入简答题答案" :disabled="!Iswrittable" />
+            <template v-else-if="question.questionType === 'SHORT_ANSWER'">
+              <el-input
+                v-model="selectedAnswers[question.questionId]"
+                type="textarea"
+                :rows="3"
+                placeholder="请输入简答题答案"
+                :disabled="!Iswrittable"
+              />
             </template>
 
             <!-- 填空题 -->
-            <template v-else-if="question.questionType === '填空题'">
-              <el-input v-model="selectedAnswers[question.id]" placeholder="请输入填空题答案" :disabled="!Iswrittable" />
-            </template>
+            <!-- <template v-else-if="question.questionType === '填空题'">
+              <el-input
+                v-model="selectedAnswers[question.questionId]"
+                placeholder="请输入填空题答案"
+                :disabled="!Iswrittable"
+              />
+            </template> -->
 
             <!-- 显示答案 -->
-            <p v-if="showAnswer[question.id]" class="answer">
-              正确答案：<span class="correct">{{ question.answer }}</span>
+            <p v-if="isdone" class="answer">
+              正确答案：<span class="correct">{{ question.correctAnswer }}</span>
             </p>
           </div>
         </el-card>
@@ -53,7 +94,14 @@
 
       <el-empty v-else description="没有题目" />
 
-      <el-button ref="submitButton" block type="primary" :loading="isSubmitting" :disabled="isSubmitting" @click="onSubmit">
+      <el-button
+        ref="submitButton"
+        block
+        type="primary"
+        :loading="isSubmitting"
+        :disabled="isSubmitting"
+        @click="onSubmit"
+      >
         {{ submitBtnText }}
       </el-button>
     </el-main>
@@ -61,16 +109,24 @@
 </template>
 
 <script>
-import { ElMessageBox } from 'element-plus';
-import { useRouter } from 'vue-router';
-import PractiveHeadbar from './PractiveHeadbar.vue';
-
+import { ElMessageBox } from "element-plus";
+import { useRouter } from "vue-router";
+import PractiveHeadbar from "./PractiveHeadbar.vue";
+import { number } from "echarts";
+import questionApi from "@/api/question";
+import userQuestionProgressApi from "@/api/userQuestionProgress";
 export default {
   components: { PractiveHeadbar },
+  props: {
+    bankid: {
+      require: true,
+      type: number,
+    },
+  },
   setup() {
     const router = useRouter();
     const onClickLeft = () => {
-      router.push({ name: 'mybank' });
+      router.push({ name: "mybank" });
     };
     return {
       onClickLeft,
@@ -78,83 +134,42 @@ export default {
   },
   data() {
     return {
-      questions: [
-        {
-          id: 1,
-          content: "选择题：你喜欢什么编程语言？",
-          questionType: "选择题",
-          optionA: "JavaScript",
-          optionB: "Python",
-          optionC: "Java",
-          optionD: "C++",
-          answer: "A",
-          score: 10,
-          Isdone: false,
-        },
-        {
-          id: 2,
-          content: "判断题：Vue 是一个前端框架。",
-          questionType: "判断题",
-          answer: "true",
-          score: 5,
-          Isdone: false,
-        },
-        {
-          id: 3,
-          content: "简答题：请简述 Vue 的响应式原理。",
-          questionType: "简答题",
-          answer: "Vue 使用了数据劫持和发布-订阅模式。",
-          score: 15,
-          Isdone: false,
-        },
-        {
-          id: 4,
-          content: "填空题：Vue 的指令 v-_____ 用于绑定元素的样式。",
-          questionType: "填空题",
-          answer: "style",
-          score: 5,
-          Isdone: false,
-        },
-        {
-          id: 5,
-          content: "选择题：你喜欢什么编程语言？",
-          questionType: "选择题",
-          optionA: "JavaScript",
-          optionB: "Python",
-          optionC: "Java",
-          optionD: "C++",
-          answer: "A",
-          score: 10,
-          Isdone:false
-        },
-        {
-          id: 6,
-          content: "选择题：你喜欢什么编程语言？",
-          questionType: "选择题",
-          optionA: "JavaScript",
-          optionB: "Python",
-          optionC: "Java",
-          optionD: "C++",
-          answer: "A",
-          score: 10,
-          Isdone:false
-        },
-      ],
+      questions: [],
       selectedAnswers: {},
-      showAnswer: {},
-      isVertical: false,
-      currentQuestionIndex: 0,
-      totalScore: 0,
+      // showAnswer: {},
+      // isVertical: false,
+      // currentQuestionIndex: 0,
+      totalCount:0,
+      correctCount:0,
       isSubmitting: false,
       Iswrittable: true,
     };
   },
   computed: {
     submitBtnText() {
-      return this.isSubmitting ? '正在提交' : '提交';
+      return this.isSubmitting ? "正在提交" : "提交";
     },
   },
   methods: {
+    //获取相应的题库题目
+    async fetchdata(bankid) {
+      try {
+        const response = await questionApi.getQuestionList(bankid);
+        return response.data || []; // 如果返回数据为空，返回空数组
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
+    //提交表单
+    async Uploaddata(formData) {
+      try {
+        const response = await userQuestionProgressApi.uploadQuestionProgress(formData);
+        return response.data || []; // 如果返回数据为空，返回空数组
+      } catch (error) {
+        console.log("error", error);
+      }
+    },
+
     // 处理题目已答完状态
     QuestionDone(item) {
       const question = this.questions.find((q) => q.id === item.id);
@@ -162,72 +177,71 @@ export default {
         question.Isdone = true;
       }
     },
-    
+
     // 提交答卷
     onSubmit() {
-      let totalCount = Object.keys(this.selectedAnswers).length;
-      let correctCount = 0;
-      let score = 0;
-      
+      const formData = this.questions.map(question => {
+      return {
+        questionId: question.questionId,
+        userAnswer: this.selectedAnswers[question.questionId] || '' // 如果没有答案，默认为空字符串
+      };
+    });
+      const result= this.Uploaddata(formData)
+      this.totalCount = result.length;
       this.isSubmitting = true;
       this.Iswrittable = false;
-
-      // 计算总得分
-      for (const question of this.questions) {
-        const userAnswer = this.selectedAnswers[question.id];
-        if (userAnswer === question.answer) {
-          correctCount++;
-          score += question.score;
+      // Calculate total score and prepare result to pass to child component
+      for (const question of this.result) {
+        if (question.isCorrect) {
+          this.correctCount++;
         }
-        this.showAnswer[question.id] = true;
       }
-      this.totalScore = score;
-      
-      const message = `你选择了 ${totalCount} 道题，答对了 ${correctCount} 道题。总得分：${this.totalScore} 分。`;
 
+
+      const message = `你选择了 ${this.totalCount} 道题，答对了 ${this.correctCount} 道题。`;
       ElMessageBox.alert(message, "考试结束啦>_<", {
-        confirmButtonText: '确定',
+        confirmButtonText: "确定",
       }).then(() => {
         this.isSubmitting = false;
       });
     },
-    
     // 滚动到指定问题
     scrollToQuestion(id) {
-      const element = document.getElementById('question-' + id);
+      const element = document.getElementById("question-" + id);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
+        element.scrollIntoView({ behavior: "smooth" });
       }
     },
 
     // 显示题目类型的设置
-    showQuestion() {
-      const question = this.questions[this.currentQuestionIndex];
-      switch (question.questionType) {
-        case "选择题":
-          this.isVertical = false;
-          break;
-        case "判断题":
-          this.isVertical = true;
-          break;
-      }
-    },
+    // showQuestion() {
+    //   const question = this.questions[this.currentQuestionIndex];
+    //   switch (question.questionType) {
+    //     case "选择题":
+    //       this.isVertical = false;
+    //       break;
+    //     case "判断题":
+    //       this.isVertical = true;
+    //       break;
+    //   }
+    // },
   },
   mounted() {
-    this.showQuestion();
+    this.questions = this.fetchdata(this.bankid);
+    // this.showQuestion();
   },
 };
 </script>
 
 <style scoped>
-  .answer {
-    color: red;
-    margin-bottom: 0;
-  }
-  .correct {
-    color: green;
-  }
-  .question-card {
-    margin: 10px;
-  }
+.answer {
+  color: red;
+  margin-bottom: 0;
+}
+.correct {
+  color: green;
+}
+.question-card {
+  margin: 10px;
+}
 </style>

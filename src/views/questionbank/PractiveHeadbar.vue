@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <div class="floating-window">
     <el-card class="floating-card">
       <h3>题库</h3>
@@ -99,5 +99,5 @@ export default {
  color: black;
 }
 
-</style>
+</style> -->
 
