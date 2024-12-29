@@ -1,6 +1,10 @@
 <template>
   <div>
-    <PractiveHeadbar :questions="questions" @scroll-to-question="scrollToQuestion"/><!--未传入-->
+    <PractiveHeadbar
+      :questions="questions"
+      @scroll-to-question="scrollToQuestion"
+      :results="results"
+    /><!--未传入-->
   </div>
   <div>
     <el-header>
@@ -86,7 +90,9 @@
 
             <!-- 显示答案 -->
             <p v-if="isdone" class="answer">
-              正确答案：<span class="correct">{{ question.correctAnswer }}</span>
+              正确答案：<span class="correct">{{
+                question.correctAnswer
+              }}</span>
             </p>
           </div>
         </el-card>
@@ -136,11 +142,12 @@ export default {
     return {
       questions: [],
       selectedAnswers: {},
+      results: {},
       // showAnswer: {},
       // isVertical: false,
       // currentQuestionIndex: 0,
-      totalCount:0,
-      correctCount:0,
+      totalCount: 0,
+      correctCount: 0,
       isSubmitting: false,
       Iswrittable: true,
     };
@@ -163,13 +170,14 @@ export default {
     //提交表单
     async Uploaddata(formData) {
       try {
-        const response = await userQuestionProgressApi.uploadQuestionProgress(formData);
+        const response = await userQuestionProgressApi.uploadQuestionProgress(
+          formData
+        );
         return response.data || []; // 如果返回数据为空，返回空数组
       } catch (error) {
         console.log("error", error);
       }
     },
-
     // 处理题目已答完状态
     QuestionDone(item) {
       const question = this.questions.find((q) => q.id === item.id);
@@ -177,33 +185,34 @@ export default {
         question.Isdone = true;
       }
     },
-
     // 提交答卷
-    onSubmit() {
-      const formData = this.questions.map(question => {
-      return {
-        questionId: question.questionId,
-        userAnswer: this.selectedAnswers[question.questionId] || '' // 如果没有答案，默认为空字符串
-      };
-    });
-      const result= this.Uploaddata(formData)
-      this.totalCount = result.length;
+    async onSubmit() {
+      const formData = this.questions.map((question) => {
+        return {
+          questionId: question.questionId,
+          userAnswer: this.selectedAnswers[question.questionId] || "", // 如果没有答案，默认为空字符串
+        };
+      });
       this.isSubmitting = true;
       this.Iswrittable = false;
-      // Calculate total score and prepare result to pass to child component
-      for (const question of this.result) {
-        if (question.isCorrect) {
-          this.correctCount++;
-        }
-      }
+      try {
+        this.results = await this.Uploaddata(formData); // 等待上传数据完成
+        this.totalCount = this.results.length;
 
+        this.correctCount = this.results.filter(
+          (question) => question.isCorrect
+        ).length;
 
-      const message = `你选择了 ${this.totalCount} 道题，答对了 ${this.correctCount} 道题。`;
-      ElMessageBox.alert(message, "考试结束啦>_<", {
-        confirmButtonText: "确定",
-      }).then(() => {
+        const message = `你选择了 ${this.totalCount} 道题，答对了 ${this.correctCount} 道题。`;
+        ElMessageBox.alert(message, "考试结束啦>_<", {
+          confirmButtonText: "确定",
+        }).then(() => {
+          this.isSubmitting = false;
+        });
+      } catch (error) {
+        console.error("提交失败:", error);
         this.isSubmitting = false;
-      });
+      }
     },
     // 滚动到指定问题
     scrollToQuestion(id) {
@@ -225,10 +234,13 @@ export default {
     //       break;
     //   }
     // },
-  },
-  mounted() {
-    this.questions = this.fetchdata(this.bankid);
-    // this.showQuestion();
+
+    mounted() {
+      this.fetchdata(this.bankid).then((data) => {
+        this.question = data;
+      });
+      // this.showQuestion();
+    },
   },
 };
 </script>
