@@ -154,6 +154,7 @@ const form = ref({
   coverImage: null,
   coverImagePreview: null,
   selectedTags: [],
+  selectedFileIds: [] // 新增属性，用于存储选中的文件ID
 });
 const updateForm = ref({
   fileId: null, // 新增文件 ID
@@ -194,7 +195,7 @@ const shareFile = () => {
 };
 
 const generateQuestionBank = () => {  
-  if (!selectedFile.value) {  
+  if (form.value.selectedFileIds.length === 0) {  
     alert('请先选择文件！');  
   } else {  
     form.value.selectedTags = selectedFile.value.tag.slice();  
@@ -204,6 +205,7 @@ const generateQuestionBank = () => {
 
 const handleSelectionChange = (val) => {  
   selectedFiles.value = val;  
+  form.value.selectedFileIds = val.map(file => file.id); // 收集选中的文件ID
   if (val.length > 0) {  
     selectedFile.value = val[0];  
   } else {  
@@ -278,19 +280,18 @@ const submitForm = async () => {
 
     // 从上传响应中获取图片URL
     const coverUrl = uploadResponse.data; // 假设响应中包含图片的 URL
-
     // 创建题库的参数
     const createParams = {
-      fileIdList: [],  // 这里需要填写相关的 fileId 列表
+      fileIdList: form.value.selectedFileIds, // 使用选中的文件ID列表
       title: form.value.customName,
       description: form.value.description,
       keywords: JSON.stringify(form.value.selectedTags), // 将标签 JSON 化
       coverUrl: coverUrl // 使用上传后的图片 URL
     };
-
+    console.log(createParams);
     // 调用创建参数接口
     const createResponse = await questionBankApi.create(createParams);
-
+    console.log(createResponse)
     if (createResponse.code === 200) {
       alert("题库创建成功");
       closeForm();
@@ -392,6 +393,7 @@ const closeForm = () => {
     coverImage: null,  
     coverImagePreview: null,  
     selectedTags: [],  
+    selectedFileIds: [] // 重置选中的文件ID列表
   };  
   newTag.value = '';  
 };  
@@ -401,6 +403,7 @@ const loadFiles = async () => {
     const response = await fileApi.getFileList();
     if (response.code === 200) {
       files.value = response.data;
+      console.log(files.value);
       transformFiles(); // 确保调用 transformFiles 函数
     } else {
       alert(response.data.message || '加载文件列表失败');
