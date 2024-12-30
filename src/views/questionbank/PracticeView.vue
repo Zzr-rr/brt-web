@@ -89,7 +89,7 @@
             </template> -->
 
             <!-- 显示答案 -->
-            <p v-if="isdone" class="answer">
+            <p v-if="Isdone" class="answer">
               正确答案：<span class="correct">{{
                 question.correctAnswer
               }}</span>
@@ -128,7 +128,7 @@ const bankid = route.params.id;
 // State
 const questions = reactive([]);
 const selectedAnswers = reactive({});
-const results = ref([]); 
+const results = ref([]);
 const totalCount = ref(0);
 const correctCount = ref(0);
 const isSubmitting = ref(false);
@@ -148,7 +148,10 @@ const submitBtnText = computed(() => {
 // Methods
 const fetchData = async (bankid) => {
   try {
-    const response = await questionApi.getQuestionList(bankid);
+    const response = await questionApi.getQuestionList({
+    "bankId":bankid
+});
+
     return response.data || []; // 返回空数组
   } catch (error) {
     console.log("error", error);
@@ -210,9 +213,11 @@ const scrollToQuestion = (id) => {
 
 // Mounted lifecycle
 onMounted(() => {
-  fetchData(bankid).then((data) => {
-    questions.push(...data);
+
+  fetchData(bankid).then((Data) => {
+    questions.push(...Data);
   });
+  
 });
 </script>
 
