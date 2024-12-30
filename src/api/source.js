@@ -17,6 +17,9 @@ const sourceApi={
       }
     });
   },
+  download(){
+    return axios.post('/')
+  }
 };
 
 export default sourceApi;
