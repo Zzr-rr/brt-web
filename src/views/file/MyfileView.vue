@@ -233,7 +233,6 @@ const submitForm = async () => {
     formData.append('description', form.value.description);
     formData.append('coverImage', form.value.coverImage);
     formData.append('selectedTags', JSON.stringify(form.value.selectedTags));
-
     const response = await fetch('/api/submit-form', {
       method: 'POST',
       body: formData,

@@ -89,6 +89,10 @@
 
 <script setup>
 import { ref } from 'vue';
+import 'element-plus/dist/index.css';
+import sourceApi from '@/api/source';
+import fileApi from '@/api/file';
+
 
 const selectedFile = ref(null);
 const fileName = ref("");
@@ -153,31 +157,53 @@ const closeForm = () => {
   form.value.selectedTags = [];
 };
 
-const submitForm = () => {
+const submitForm = async () => {
   if (form.value.selectedTags.length === 0) {
-    this.$message.error("请至少选择一个标签！");
+    alert("请至少选择一个标签！");
     return;
   }
 
-  const formData = new FormData();
-  formData.append("file", selectedFile.value);
-  formData.append("name", form.value.customName);
-  formData.append("tags", form.value.selectedTags.join(","));
+  // 首先处理文件上传
+  const fileFormData = new FormData();
+  fileFormData.append("file", selectedFile.value);
 
-  fetch("YOUR_BACKEND_API_URL", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      this.$message.success("文件上传成功");
-      closeForm();
-      resetFile();
-    })
-    .catch((error) => {
-      console.error("Error:", error);
-      this.$message.error("文件上传失败");
-    });
+  try {
+    // 调用文件上传接口
+    const uploadResponse = await sourceApi.uploadContent(fileFormData);
+    console.log('文件上传响应:', uploadResponse);
+    if (uploadResponse.code !== 200) { // 假设200表示成功
+      alert("文件上传失败");
+      return;
+    }
+    alert("文件上传成功");
+
+    // 从上传响应中获取文件URL
+    const fileUrl = uploadResponse.data; // 假设响应中包含文件URL
+
+    // 构造文件创建所需的JSON对象
+    const keywordsStr = JSON.stringify(form.value.selectedTags);
+    const createData = {
+      fileName: form.value.customName,
+      fileType: "OTHER", // 如果有动态确定文件类型的逻辑，应该在这里设置
+      keywords: keywordsStr, // 格式化为所需的字符串
+      fileUrl: fileUrl
+    };
+    console.log(createData.keywords)
+    // 调用文件创建接口
+    const createResponse = await fileApi.create(createData);
+    console.log('文件创建响应:', createResponse);
+    if (createResponse.code !== 200) { // 假设200表示成功
+      alert("文件创建失败");
+      return;
+    }
+    alert("文件创建成功");
+
+    closeForm();
+    resetFile();
+  } catch (error) {
+    console.error("文件处理失败:", error);
+    alert("文件处理失败");
+  }
 };
 
 const addTag = () => {
