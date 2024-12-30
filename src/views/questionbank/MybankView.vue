@@ -3,7 +3,9 @@
     <el-col :span="6" v-for="(item, index) in transformedBanks" :key="index">  
       <div class="item" @click="goToDetail(item.id)">  
         <div class="imgItem">  
-          <img :src="item.fileUrl" />  
+          <!-- 使用 v-if 检查 fileUrl 是否存在，避免加载不存在的图片 -->
+          <img v-if="item.fileUrl" :src=item.fileUrl />
+          <!-- 显示默认图片或错误图片 -->
         </div>  
         <div class="info">  
           <div class="title-container"> <!-- 新增的容器 -->  
@@ -25,13 +27,11 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
+import axios from 'axios';
 import questionBankApi from '@/api/questionBank'; // 确保路径正确
-
 
 const Banks = ref([]);
 const transformedBanks = ref([]);
-
-
 
 const router = useRouter();  
 
@@ -54,7 +54,7 @@ const loadBanks = async () => {
     if (response.code === 200) {  
       Banks.value = response.data; // 更新原始 Banks 变量  
       console.log(response.data);  
-      transformBanks(); // 确保调用 transformBanks 函数  
+      await transformBanks(); // 确保调用 transformBanks 函数  
     } else {  
       alert(response.data.message || '加载题库列表失败');  
     }  
@@ -65,18 +65,34 @@ const loadBanks = async () => {
 };  
 
 // 数据转换函数  
-const transformBanks = () => {  
-  transformedBanks.value = Banks.value.map(bank => {  
-    return {  
+const transformBanks = async () => {  
+  Banks.value.forEach(async (bank) => {  
+    let fileUrl = bank.coverUrl;
+    if (bank.coverUrl) {
+      try {
+        const response = await axios.get('/api' + fileUrl, {
+          responseType: 'blob' // 确保响应类型为blob
+        });
+        fileUrl = window.URL.createObjectURL(response.data); // 创建URL对象
+        // fileUrl = response.data.Url;
+      } catch (error) {
+        console.error("Failed to download image:", error);
+        fileUrl = ''; // 如果下载失败，设置为空
+      }
+    }
+    const transformedItem = {  
       id: bank.bankId,  
       name: bank.title,  
       des: bank.description,  
       modified: bank.createdAt, // 或者选择 updatedAt  
-      fileUrl: bank.coverUrl, // 封面url  
+      fileUrl, // 使用下载后的 URL  
       tag: JSON.parse(bank.keywords) // 将 JSON 字符串转换为数组  未在封面进行显示！！
-    };  
-  });  
+    };
+    transformedBanks.value.push(transformedItem);
+  });
 };   
+
+
 
 // 将 deleteItem 函数标记为 async  
 const deleteItem = async (id) => {  

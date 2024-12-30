@@ -1,4 +1,27 @@
 <template>
+<<<<<<< HEAD
+  <el-row :gutter="40" class="discount">
+    <el-col :span="6" v-for="(item, index) in transformedBanks" :key="index">
+      <div class="item" @click="goToDetail(item.id)">
+        <div class="imgItem">
+          <img :src="item.fileUrl" v-if="item.fileUrl" />
+          <div v-else class="placeholder">无图片</div> <!-- 处理没有图片的情况 -->
+        </div>
+        <div class="info">
+          <div class="title-container">
+            <div class="title">{{ item.name }}</div>
+            <div class="action-button">
+              <el-button type="text" @click.stop="goItem(item.id)">进入</el-button>
+              <el-button type="text" @click.stop="deleteItem(item.id)">删除</el-button>
+            </div>
+          </div>
+          <div class="desc">{{ item.des }}</div>
+          <div class="bottom">{{ item.modified }}</div>
+        </div>
+      </div>
+    </el-col>
+  </el-row>
+=======
   <el-container class="file-list-container">
     <!-- 控制按钮 -->
     <el-header class="file-controls">
@@ -131,12 +154,22 @@
       <el-button type="primary" @click="submitUpdateForm">确认</el-button>
     </template>
   </el-dialog>
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
+<<<<<<< HEAD
+import questionBankApi from '@/api/questionBank';
+import sourceApi from '@/api/source'; // 引入新的 API
+
+const Banks = ref([]);
+const transformedBanks = ref([]);
+
+const router = useRouter();
+=======
 import fileApi from '@/api/file'; // 确保路径正确
 import sourceApi from '@/api/source';
 import questionBankApi from '@/api/questionBank';
@@ -163,11 +196,22 @@ const updateForm = ref({
 const newTag = ref('');
 const updateNewTag = ref('');
 const formLabelWidth = '120px';
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
 
-const uploadFile = () => {
-  router.push({ name: 'upload' });
+const goToDetail = (id) => {
+  router.push({ name: 'ItemDetail', params: { id } });
 };
 
+<<<<<<< HEAD
+const goItem = (id) => {
+  router.push({ name: 'questionbank' }).then(() => {
+    router.push({ name: 'practice', params: { id } });
+  });
+};
+
+// 加载题库列表
+const loadBanks = async () => {
+=======
 const downLoadAction = () => {
   alert('开始下载');
 };
@@ -398,20 +442,39 @@ const closeForm = () => {
 };  
 
 const loadFiles = async () => {
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
   try {
-    const response = await fileApi.getFileList();
+    const response = await questionBankApi.getBankList();
     if (response.code === 200) {
+<<<<<<< HEAD
+      Banks.value = response.data;
+      console.log(response.data);
+      transformBanks();
+=======
       files.value = response.data;
       transformFiles(); // 确保调用 transformFiles 函数
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
     } else {
-      alert(response.data.message || '加载文件列表失败');
+      alert(response.data.message || '加载题库列表失败');
     }
   } catch (error) {
-    console.error("Failed to load files:", error);
-    alert('加载文件列表时发生错误');
+    console.error("Failed to load banks:", error);
+    alert('加载题库列表时发生错误');
   }
 };
 
+<<<<<<< HEAD
+// 数据转换函数
+const transformBanks = () => {
+  transformedBanks.value = Banks.value.map(bank => {
+    return {
+      id: bank.bankId,
+      name: bank.title,
+      des: bank.description,
+      modified: bank.createdAt,
+      fileUrl: bank.coverUrl || '/path/to/default/image.jpg', // 设置默认图片
+      tag: JSON.parse(bank.keywords)
+=======
 const transformFiles = () => {
   transformedFiles.value = files.value.map(file => {
     return {
@@ -420,73 +483,147 @@ const transformFiles = () => {
       modified: file.updatedAt, // 或者选择 updatedAt
       tag: JSON.parse(file.keywords), // 将 JSON 字符串转换为数组
       fileUrl: file.fileUrl // 添加文件下载 URL
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
     };
   });
 };
 
+<<<<<<< HEAD
+// 删除题库
+const deleteItem = async (id) => {
+  if (confirm("确定要删除这个题库吗？")) {
+    try {
+      const response = await questionBankApi.delete({ bankId: id });
+      if (response && response.code === 200) {
+        alert('文件删除成功');
+        await loadBanks(); 
+      } else {
+        alert((response && response.data && response.data.message) || '删除题库失败');
+      }
+    } catch (error) {
+      console.error("删除题库时发生错误:", error);
+      alert('发生错误，删除题库失败，错误信息为: ' + (error.message || '未知错误'));
+    }
+  }
+};
+
+// 上传图片
+const uploadImage = async (file, bankId) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  try {
+    const response = await sourceApi.uploadImage(formData);
+    if (response.code === 200) {
+      alert('图片上传成功');
+      await loadBanks(); // 重新加载题库列表以显示新的图片
+    } else {
+      alert('图片上传失败，原因: ' + (response.data.message || '未知错误'));
+    }
+  } catch (error) {
+    console.error("图片上传时发生错误:", error);
+    alert('发生错误，图片上传失败，错误信息为: ' + (error.message || '未知错误'));
+  }
+};
+
+onMounted(loadBanks);
+=======
 onMounted(loadFiles);
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
 </script>
 
-<style scoped>
-.file {  
-  color: #444444;  
-  font-family: 'Microsoft YaHei', sans-serif;  
-  font-size: 13px;  
-  width: 100%;  
-}  
-.file-list-container {  
-  width: 100%;  
-  margin: auto;  
-  margin-top: 20px;  
-}  
-.file-controls {  
-  display: flex;  
-  gap: 10px;  
-  justify-content: flex-start;  
-  padding-bottom: 20px;  
-}  
-.tag-container {  
-  display: flex;  
-  gap: 8px;  
-  align-items: center;  
-}  
-.file-tag {  
-  font-size: 12px;  
-}  
-.action-button {  
-  display: none;  
-}  
-.el-table__body tr:hover .action-button {  
-  display: inline-block;  
-  position: absolute;  
-  left: -260px;  
-}  
-.image-preview-container {  
-  display: flex;  
-  justify-content: center; /* 水平居中对齐 */  
-  align-items: center; /* 垂直居中对齐 */  
-  flex-direction: column; /* 竖向排列容器内的元素 */  
-  width: 200px; /* 设置固定宽度 */  
-  height: 200px; /* 设置固定高度 */  
-  border: 1px solid #ccc; /* 添加边框 */  
-  margin: 0 auto 10px; /* 水平居中，底部间距为10px */  
-  overflow: hidden; /* 隐藏溢出部分 */  
-  position: relative; /* 为绝对定位提供参考 */  
-}  
-
-.preview-image {  
-  max-width: 100%; /* 最大宽度为容器的100% */  
-  max-height: 100%; /* 最大高度为容器的100% */  
-  object-fit: cover;
-}  
-
-.description {  
-  position: absolute; /* 绝对定位 */  
-  bottom: -30px; /* 存在于容器下方，可以根据需要调整这个值 */  
-  left: 50%;  
-  transform: translateX(-50%); /* 水平居中 */  
-  width: 300px; /* 描述的宽度 */  
-  text-align: center; /* 描述文本居中 */  
-  margin-top: 10px; /* 描述离方框的额外间距 */  
+<style lang="less" scoped>
+.discount {
+  border-radius: 10px;
 }
+<<<<<<< HEAD
+
+.item {
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: translateY(-10px);
+  }
+}
+
+.imgItem {
+  height: 65%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: gray;
+    font-size: 16px;
+  }
+}
+
+.info {
+  padding: 5px;
+  flex: 1;
+  background-color: #eeeeee;
+
+  .title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 5px;
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1px;
+    font-family: system-ui;
+  }
+
+  .action-button {
+    display: none;
+  }
+
+  .title-container:hover .action-button {
+    display: flex;
+    gap: 10px;
+  }
+
+  .desc {
+    padding: 8px;
+    font-size: 14px;
+    color: #0c0c0c;
+    line-height: 1;
+    font-family: Georgia, serif;
+    font-weight: normal;
+  }
+
+  .bottom {
+    padding: 5px;
+    font-size: 13px;
+    color: #2d2d2d;
+    position: absolute;
+    right: 5px;
+    bottom: 0;
+  }
+}
+=======
+>>>>>>> cc261ee28582b509d951337b62ce9857c7a219d8
 </style>
