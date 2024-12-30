@@ -1,94 +1,104 @@
 <template>  
   <el-row :gutter="40" class="discount">  
-    <el-col :span="6" v-for="(item, index) in CardItemData" :key="index">  
+    <el-col :span="6" v-for="(item, index) in transformedBanks" :key="index">  
       <div class="item" @click="goToDetail(item.id)">  
         <div class="imgItem">  
-          <img :src="item.imgUrl" />  
+          <img :src="item.fileUrl" />  
         </div>  
         <div class="info">  
           <div class="title-container"> <!-- 新增的容器 -->  
-            <div class="title">{{ item.title }}</div>  
+            <div class="title">{{ item.name }}</div>  
             <div class="action-button"> <!-- 操作按钮 -->  
               <el-button type="text" @click.stop="goItem(item.id)">进入</el-button>  
               <el-button type="text" @click.stop="deleteItem(item.id)">删除</el-button>  
             </div>  
           </div>  
-          <div class="desc">{{ item.desc }}</div>  
-          <div class="bottom">{{ item.time }}</div>  
+          <div class="desc">{{ item.des }}</div>  
+          <div class="bottom">{{ item.modified }}</div>  
         </div>  
       </div>  
     </el-col>  
   </el-row>  
-</template>  
+</template> 
 
 <script setup>  
-import { ItemList as CardItemData } from "@/assets/data/MyBank";  
-import { useRouter } from 'vue-router';  
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
-
 import questionBankApi from '@/api/questionBank'; // 确保路径正确
-import axios from 'axios';
+
 
 const Banks = ref([]);
 const transformedBanks = ref([]);
+
+
+
 const router = useRouter();  
+
 const goToDetail = (id) => {  
   router.push({ name: 'ItemDetail', params: { id } });  
-}  ;
+};  
+
 const goItem = (id) => {  
-  router.push({ name: 'practice', params: { id } });  
+  // 首先导航到 questionbank
+  router.push({ name: 'questionbank' }).then(() => {
+    // 然后导航到 practice
+    router.push({ name: 'practice', params: { id } });
+  });
 };
-// 加载文件列表  
-const loadFiles = async (id) => {  
+
+// 加载题库列表  
+const loadBanks = async () => {  
   try {  
     const response = await questionBankApi.getBankList();  
     if (response.code === 200) {  
-      Banks.value = response.data; // 更新原始 files 变量  
+      Banks.value = response.data; // 更新原始 Banks 变量  
       console.log(response.data);  
-      // transformFiles(); // 确保调用 transformFiles 函数  
+      transformBanks(); // 确保调用 transformBanks 函数  
     } else {  
-      alert(response.data.message || '加载文件列表失败');  
+      alert(response.data.message || '加载题库列表失败');  
     }  
   } catch (error) {  
-    console.error("Failed to load files:", error);  
-    alert('加载文件列表时发生错误');  
+    console.error("Failed to load banks:", error);  
+    alert('加载题库列表时发生错误');  
   }  
 };  
 
 // 数据转换函数  
-// const transformFiles = () => {  
-//   transformedBanks.value = Banks.value.map(file => {  
-//     return {  
-//       id: file.fileId,  
-//       name: file.fileName,  
-//       modified: file.createdAt, // 或者选择 updatedAt  
-//       tag: JSON.parse(file.keywords), // 将 JSON 字符串转换为数组  
-//       fileUrl: file.fileUrl // 添加文件下载 URL  
-//     };  
-//   });  
-// };   
+const transformBanks = () => {  
+  transformedBanks.value = Banks.value.map(bank => {  
+    return {  
+      id: bank.bankId,  
+      name: bank.title,  
+      des: bank.description,  
+      modified: bank.createdAt, // 或者选择 updatedAt  
+      fileUrl: bank.coverUrl, // 封面url  
+      tag: JSON.parse(bank.keywords) // 将 JSON 字符串转换为数组  未在封面进行显示！！
+    };  
+  });  
+};   
 
 // 将 deleteItem 函数标记为 async  
 const deleteItem = async (id) => {  
-  // 这里你可以添加删除逻辑，比如弹出确认框或调用 API   
   if (confirm("确定要删除这个题库吗？")) {  
     try {  
-      const response = await questionBankApi.delete({ bankId: id }); // 传递文件 ID 作为参数  
-      if (response.code === 200) {  
+      const response = await questionBankApi.delete({ bankId: id });  
+      
+      // 检查 response 是否存在且有效  
+      if (response && response.code === 200) {  
         alert('文件删除成功');  
-        await loadFiles(); // 重新加载文件列表  
+        await loadBanks(); // 重新加载题库列表  
       } else {  
-        alert(response.data.message || '删除题库失败');  
+        alert((response && response.data && response.data.message) || '删除题库失败');  
       }  
     } catch (error) {  
       console.error("删除题库时发生错误:", error);  
-      alert('发生错误，删除题库失败');  
+      alert('发生错误，删除题库失败，错误信息为: ' + (error.message || '未知错误'));  
     }  
   }  
 };
-onMounted(loadFiles);
 
+onMounted(loadBanks);  
 </script>  
 
 <style lang="less" scoped>  
