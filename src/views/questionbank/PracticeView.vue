@@ -33,7 +33,7 @@
                 <el-radio
                   v-for="(option, index) in question.options"
                   :key="index"
-                  :value="String.fromCharCode(65 + index)"
+                  :value="option"
                 >
                   {{ String.fromCharCode(65 + index) }}.{{ option }}
                 </el-radio>
@@ -48,7 +48,7 @@
               <el-checkbox
                   v-for="(option, index) in question.options"
                   :key="index"
-                  :value="String.fromCharCode(65 + index)"
+                  :value="option"
                 >
                   {{ String.fromCharCode(65 + index) }}.{{ option }}
                 </el-checkbox>
@@ -180,22 +180,58 @@ const QuestionDone = (item) => {
 };
 
 const onSubmit = async () => {
-  const formData = questions.map((question) => ({
-    questionId: question.questionId,
-    userAnswer: selectedAnswers[question.questionId] || "", // 默认空字符串
-  }));
+  console.log("200",selectedAnswers);
+  
+  const constructformData = (questions, selectedAnswers) => {
+  return questions.map((question) => {
+    const questionId = question.questionId;
+    const userAnswer = selectedAnswers[questionId]; 
+    const options = question.options;
 
+    if (question.questionType === "SHORT_ANSWER") {
+      // 单选题或简答题的处理
+      return {
+        questionId: questionId,
+        userAnswer: userAnswer, // 用户直接选择的答案
+      };
+    } else if (question.questionType==="MULTIPLE_CHOICE"||question.questionType==="SINGLE_CHOICE") {
+      // 多选题的处理
+      const reconstructedAnswers = options.map((option) => {
+        return {
+          content: option,
+          isCorrect: userAnswer.includes(option), // 判断用户是否选择了该选项
+        };
+      });
+
+      return {
+        questionId: questionId,
+        userAnswer: JSON.stringify(reconstructedAnswers), // 转为字符串存储
+      };
+    } else {
+      // 其他情况（没有选中答案）
+      return {
+        questionId: questionId,
+        userAnswer: "",
+      };
+    }
+  });
+};
+
+const formData=constructformData(questions, selectedAnswers);
+  console.log("111",formData);
   isSubmitting.value = true;
   Iswrittable.value = false;
 
   try {
     results.value = await uploadData(formData); // 等待上传数据完成
-    totalCount.value = results.value.length;
-    correctCount.value = results.value.filter(
+    console.log(results);
+    // totalCount.value = results.value.data.length;
+    correctCount.value = results.value.data.filter(
       (question) => question.isCorrect
     ).length;
-
-    const message = `你选择了 ${totalCount.value} 道题，答对了 ${correctCount.value} 道题。`;
+    
+    // 选择了 ${totalCount.value} 道题，
+    const message = `你答对了 ${correctCount.value} 道题。`;
     ElMessageBox.alert(message, "考试结束啦>_<", {
       confirmButtonText: "确定",
     }).then(() => {
