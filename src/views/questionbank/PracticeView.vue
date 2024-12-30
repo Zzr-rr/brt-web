@@ -114,135 +114,106 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, reactive, computed, onMounted } from "vue";
 import { ElMessageBox } from "element-plus";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import PractiveHeadbar from "./PractiveHeadbar.vue";
-import { number } from "echarts";
 import questionApi from "@/api/question";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
-export default {
-  components: { PractiveHeadbar },
-  props: {
-    bankid: {
-      require: true,
-      type: number,
-    },
-  },
-  setup() {
-    const router = useRouter();
-    const onClickLeft = () => {
-      router.push({ name: "mybank" });
-    };
-    return {
-      onClickLeft,
-    };
-  },
-  data() {
-    return {
-      questions: [],
-      selectedAnswers: {},
-      results: {},
-      // showAnswer: {},
-      // isVertical: false,
-      // currentQuestionIndex: 0,
-      totalCount: 0,
-      correctCount: 0,
-      isSubmitting: false,
-      Iswrittable: true,
-    };
-  },
-  computed: {
-    submitBtnText() {
-      return this.isSubmitting ? "正在提交" : "提交";
-    },
-  },
-  methods: {
-    //获取相应的题库题目
-    async fetchdata(bankid) {
-      try {
-        const response = await questionApi.getQuestionList(bankid);
-        return response.data || []; // 如果返回数据为空，返回空数组
-      } catch (error) {
-        console.log("error", error);
-      }
-    },
-    //提交表单
-    async Uploaddata(formData) {
-      try {
-        const response = await userQuestionProgressApi.uploadQuestionProgress(
-          formData
-        );
-        return response.data || []; // 如果返回数据为空，返回空数组
-      } catch (error) {
-        console.log("error", error);
-      }
-    },
-    // 处理题目已答完状态
-    QuestionDone(item) {
-      const question = this.questions.find((q) => q.id === item.id);
-      if (question) {
-        question.Isdone = true;
-      }
-    },
-    // 提交答卷
-    async onSubmit() {
-      const formData = this.questions.map((question) => {
-        return {
-          questionId: question.questionId,
-          userAnswer: this.selectedAnswers[question.questionId] || "", // 如果没有答案，默认为空字符串
-        };
-      });
-      this.isSubmitting = true;
-      this.Iswrittable = false;
-      try {
-        this.results = await this.Uploaddata(formData); // 等待上传数据完成
-        this.totalCount = this.results.length;
 
-        this.correctCount = this.results.filter(
-          (question) => question.isCorrect
-        ).length;
+const route = useRoute();
+const bankid = route.params.id;
 
-        const message = `你选择了 ${this.totalCount} 道题，答对了 ${this.correctCount} 道题。`;
-        ElMessageBox.alert(message, "考试结束啦>_<", {
-          confirmButtonText: "确定",
-        }).then(() => {
-          this.isSubmitting = false;
-        });
-      } catch (error) {
-        console.error("提交失败:", error);
-        this.isSubmitting = false;
-      }
-    },
-    // 滚动到指定问题
-    scrollToQuestion(id) {
-      const element = document.getElementById("question-" + id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    },
+// State
+const questions = reactive([]);
+const selectedAnswers = reactive({});
+const results = ref([]); 
+const totalCount = ref(0);
+const correctCount = ref(0);
+const isSubmitting = ref(false);
+const Iswrittable = ref(true);
 
-    // 显示题目类型的设置
-    // showQuestion() {
-    //   const question = this.questions[this.currentQuestionIndex];
-    //   switch (question.questionType) {
-    //     case "选择题":
-    //       this.isVertical = false;
-    //       break;
-    //     case "判断题":
-    //       this.isVertical = true;
-    //       break;
-    //   }
-    // },
-
-    mounted() {
-      this.fetchdata(this.bankid).then((data) => {
-        this.question = data;
-      });
-      // this.showQuestion();
-    },
-  },
+// Router
+const router = useRouter();
+const onClickLeft = () => {
+  router.push({ name: "mybank" });
 };
+
+// Computed properties
+const submitBtnText = computed(() => {
+  return isSubmitting.value ? "正在提交" : "提交";
+});
+
+// Methods
+const fetchData = async (bankid) => {
+  try {
+    const response = await questionApi.getQuestionList(bankid);
+    return response.data || []; // 返回空数组
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+const uploadData = async (formData) => {
+  try {
+    const response = await userQuestionProgressApi.uploadQuestionProgress(
+      formData
+    );
+    return response.data || []; // 返回空数组
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+
+const QuestionDone = (item) => {
+  const question = questions.find((q) => q.id === item.id);
+  if (question) {
+    question.Isdone = true;
+  }
+};
+
+const onSubmit = async () => {
+  const formData = questions.map((question) => ({
+    questionId: question.questionId,
+    userAnswer: selectedAnswers[question.questionId] || "", // 默认空字符串
+  }));
+
+  isSubmitting.value = true;
+  Iswrittable.value = false;
+
+  try {
+    results.value = await uploadData(formData); // 等待上传数据完成
+    totalCount.value = results.value.length;
+    correctCount.value = results.value.filter(
+      (question) => question.isCorrect
+    ).length;
+
+    const message = `你选择了 ${totalCount.value} 道题，答对了 ${correctCount.value} 道题。`;
+    ElMessageBox.alert(message, "考试结束啦>_<", {
+      confirmButtonText: "确定",
+    }).then(() => {
+      isSubmitting.value = false;
+    });
+  } catch (error) {
+    console.error("提交失败:", error);
+    isSubmitting.value = false;
+  }
+};
+
+const scrollToQuestion = (id) => {
+  const element = document.getElementById("question-" + id);
+  if (element) {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+};
+
+// Mounted lifecycle
+onMounted(() => {
+  fetchData(bankid).then((data) => {
+    questions.push(...data);
+  });
+});
 </script>
 
 <style scoped>
