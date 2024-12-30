@@ -35,6 +35,9 @@ const sourceApi = {
       }
     });
   },
+  download(){
+    return axios.post('/')
+  }
 //   // 根据fileurl下载图片
 //   downloadImage(fileUrl) {
 //     const fullUrl = `http://60.204.136.225:6000${fileUrl}`; // 构造完整的请求URL
