@@ -4,20 +4,20 @@
       <h3>题库</h3>
       <div class="button-container">
         <el-button
-          v-for="item in questions"
-          :key="item.id"
+          v-for="(item, index) in questions"
+          :key="item.questionId"
           :type="
-            resultMap[item.id] !== undefined
+            resultMap[item.questionId] !== undefined
               ? resultMap[item.id]
                 ? 'success'
                 : 'danger'
               : 'primary'
           "
           size="small"
-          @click="scrollToQuestion(item.id)"
-        :class="item.Isdone?'done':'pending'"
+          @click="scrollToQuestion(item.questionId)"
+          :class="item.Isdone === undefined ? 'pending' : 'done'"
         >
-          {{ item.id }}
+          {{ index + 1 }}
         </el-button>
       </div>
     </el-card>
@@ -49,7 +49,7 @@ export default {
   methods: {
     // Scroll to a specific question
     scrollToQuestion(id) {
-      this.$emit('scroll-to-question', id);
+      this.$emit("scroll-to-question", id);
     },
   },
   watch: {
@@ -58,8 +58,7 @@ export default {
       this.resultMap = newResults;
     },
   },
-}
-
+};
 </script>
 
 <style scoped>
@@ -76,28 +75,24 @@ export default {
   padding: 5px;
 }
 
-
 .button-container {
-  display: grid; 
-  grid-template-columns: repeat(3,1fr);
-  gap: 10px; 
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   justify-items: right;
-  align-items: center; 
+  align-items: center;
 }
 ::v-deep(.el-button) {
   width: 40px;
   height: 40px;
-  transition: background-color 0.3s ease, color 0.3s ease; 
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 ::v-deep(.el-button.done) {
   color: white;
 }
 
 ::v-deep(.el-button.pending) {
-  
- background-color: white;
- color: black;
+  background-color: white;
+  color: black;
 }
-
 </style>
-
