@@ -65,9 +65,12 @@ const routes = [
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
       {
-        path: "practice",
+        // path: "practice",
+        path: "practice/:id", // 添加动态段来匹配id参数
         name: "practice",
         component: () => import("@/views/questionbank/PracticeView.vue"),
+        //component : () => console.log('Practice ID:', this.params.id),
+        props:true,
       },
     ],
   },

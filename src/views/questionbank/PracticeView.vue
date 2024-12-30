@@ -117,7 +117,6 @@
 <script >
 import { ElMessageBox } from "element-plus";
 import { useRouter } from "vue-router";
-import { ref, onMounted } from 'vue';
 
 import PractiveHeadbar from "./PractiveHeadbar.vue";
 import { number } from "echarts";
@@ -125,53 +124,7 @@ import questionApi from "@/api/question";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
 
 
-const QuestionList = ref([]);
-const questions = ref([]);
-// 加载文件列表
-const loadList = async () => {
-  try {
-    const response = await questionApi.getquestionList();
-    if (response.code === 200) {
-      QuestionList.value = response.data; // 更新原始 files 变量
-      console.log(response.data);
-      transformLists(); // 确保调用 transformFiles 函数
-    } else {
-      alert(response.data.message || '加载文件列表失败');
-    }
-  } catch (error) {
-    console.error("Failed to load files:", error);
-    alert('加载文件列表时发生错误');
-  }
-};
 
-// 数据转换函数
-const transformLists = () => {
-  questions.value = QuestionList.value.map(questionlist => {
-    return {
-       
-      questionId: questionlist.bankid,
-      questionText: JSON.parse(questionlist.questionText),
-      questionType : JSON.parse(questionlist.questionType),
-      options : JSON.parse(questionlist.options),
-      answer : JSON.parse(questionlist.correctAnswer),
-      // {
-      //       "questionId": 51,
-      //       "bankId": 19,
-      //       "questionText": "大型语言模型（LLMs）在路径规划中的优势是什么？",
-      //       "questionType": "MULTIPLE_CHOICE",
-      //       "options": "[\"提供对环境的全局洞察\", \"在详细的空间和时间推理方面表现出色\", \"能够解决传统算法的计算和内存限制\", \"保证路径的有效性\"]",
-      //       "correctAnswer": "[{\"content\": \"提供对环境的全局洞察\", \"isCorrect\": true}, {\"content\": \"在详细的空间和时间推理方面表现出色\", \"isCorrect\": false}, {\"content\": \"能够解决传统算法的计算和内存限制\", \"isCorrect\": false}, {\"content\": \"保证路径的有效性\", \"isCorrect\": false}]",
-      //       "difficulty": "EASY",
-      //       "createdAt": "2024-12-01T01:37:31",
-      //       "updatedAt": "2024-12-01T01:37:31",
-      //       "isDeleted": false
-      //   }  
-    };
-  });
-};
-
-// 组件挂载时加载文件列表
-onMounted(loadList);
 
 export default {
   components: { PractiveHeadbar },

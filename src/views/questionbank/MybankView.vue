@@ -83,20 +83,22 @@ const deleteItem = async (id) => {
   if (confirm("确定要删除这个题库吗？")) {  
     try {  
       const response = await questionBankApi.delete({ bankId: id });  
-      if (response.code === 200) {  
+      
+      // 检查 response 是否存在且有效  
+      if (response && response.code === 200) {  
         alert('文件删除成功');  
         await loadBanks(); // 重新加载题库列表  
       } else {  
-        alert(response.data.message || '删除题库失败');  
+        alert((response && response.data && response.data.message) || '删除题库失败');  
       }  
     } catch (error) {  
       console.error("删除题库时发生错误:", error);  
-      alert('发生错误，删除题库失败');  
+      alert('发生错误，删除题库失败，错误信息为: ' + (error.message || '未知错误'));  
     }  
   }  
-};  
+};
 
-onMounted(loadBanks());  
+onMounted(loadBanks);  
 </script>  
 
 <style lang="less" scoped>  
