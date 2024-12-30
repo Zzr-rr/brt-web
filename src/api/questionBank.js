@@ -11,7 +11,6 @@ const questionBankApi={
       return axios.post('/brt/questionBank/update',params);  // 假设这是获取文件列表的接口
   },
     getBankList() {
-        
         const body={};
         return axios.post('/brt/questionBank/list/personal',body);  // 假设这是获取文件列表的接口
 },

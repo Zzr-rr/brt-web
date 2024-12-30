@@ -138,6 +138,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
 import fileApi from '@/api/file'; // 确保路径正确
+import sourceApi from '@/api/source';
+import questionBankApi from '@/api/questionBank';
 
 const router = useRouter();
 const files = ref([]);
@@ -207,6 +209,105 @@ const handleSelectionChange = (val) => {
   } else {  
     selectedFile.value = null;  
   }  
+};
+
+const handleCoverImageChange = (event) => {
+  // 获取选中的第一个文件
+  const selectedImage = event.target.files[0];
+  if (selectedImage) {
+    // 验证文件类型
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp"
+    ];
+    if (!validImageTypes.includes(selectedImage.type)) {
+      this.$message.error(
+        "不支持的文件类型。请上传JPEG、PNG、GIF或WEBP格式的图片。"
+      );
+      resetImage();
+      return;
+    }
+    // 验证文件大小
+    if (selectedImage.size > 2 * 1024 * 1024) { // 限制为2MB
+      this.$message.error("文件大小不能超过2MB");
+      resetImage();
+      return;
+    }
+    // 设置文件名及预览
+    form.value.coverImage = selectedImage; // 保存选中的图片文件
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      form.value.coverImagePreview = e.target.result; // 读取文件并生成预览
+    };
+    reader.readAsDataURL(selectedImage);
+  }
+};
+
+// 提交表单
+const submitForm = async () => {
+  // 验证标签是否输入
+  console.log(form.value);
+  if (form.value.selectedTags.length === 0) {
+    alert("请至少选择一个标签！");
+    return;
+  }
+  
+  // 验证图片文件是否选择
+  if (!form.value.coverImage) {
+    alert("请上传封面图片！");
+    return;
+  }
+
+  // 创建 FormData 对象并添加图片文件
+  const imageFormData = new FormData();
+  imageFormData.append("file", form.value.coverImage);
+
+  try {
+    // 调用图片上传接口
+    const uploadResponse = await sourceApi.uploadImage(imageFormData);
+    console.log('图片上传响应:', uploadResponse);
+    
+    // 检查上传结果
+    if (uploadResponse.code !== 200) {
+      alert("图片上传失败");
+      return;
+    }
+    
+    alert("图片上传成功");
+
+    // 从上传响应中获取图片URL
+    const coverUrl = uploadResponse.data; // 假设响应中包含图片的 URL
+
+    // 创建题库的参数
+    const createParams = {
+      fileIdList: [],  // 这里需要填写相关的 fileId 列表
+      title: form.value.customName,
+      description: form.value.description,
+      keywords: JSON.stringify(form.value.selectedTags), // 将标签 JSON 化
+      coverUrl: coverUrl // 使用上传后的图片 URL
+    };
+
+    // 调用创建参数接口
+    const createResponse = await questionBankApi.create(createParams);
+
+    if (createResponse.code === 200) {
+      alert("题库创建成功");
+      closeForm();
+    } else {
+      alert("题库创建失败");
+    }
+  } catch (error) {
+    console.error("提交时发生错误:", error);
+    alert("提交失败");
+  }
+};
+
+// 重置图片相关状态
+const resetImage = () => {
+  form.value.coverImage = null;
+  form.value.coverImagePreview = null;
 };
 
 const openUpdateForm = (row) => {

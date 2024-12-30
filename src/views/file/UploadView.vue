@@ -105,31 +105,7 @@ const availableTags = ref(["数学", "物理", "化学", "生物", "英语", "�
 const newTag = ref("");
 const maxTags = 7; // 最大标签数量
 
-const handleFileUpload = (event) => {
-  selectedFile.value = event.target.files[0];
-  if (selectedFile.value) {
-    const validTypes = [
-      "application/pdf",
-      "application/msword",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "text/plain",
-    ];
-    if (!validTypes.includes(selectedFile.value.type)) {
-      this.$message.error(
-        "不支持的文件类型。请上传PDF、DOC、DOCX或TXT文件。"
-      );
-      resetFile();
-      return;
-    }
-    if (selectedFile.value.size > 5 * 1024 * 1024) {
-      this.$message.error("文件大小不能超过5MB");
-      resetFile();
-      return;
-    }
-    fileName.value = selectedFile.value.name;
-    form.value.customName = fileName.value;
-  }
-};
+
 
 const resetFile = () => {
   selectedFile.value = null;
@@ -155,6 +131,32 @@ const showForm = () => {
 const closeForm = () => {
   isFormVisible.value = false; // 关闭弹窗
   form.value.selectedTags = [];
+};
+
+const handleFileUpload = (event) => {
+  selectedFile.value = event.target.files[0];
+  if (selectedFile.value) {
+    const validTypes = [
+      "application/pdf",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "text/plain",
+    ];
+    if (!validTypes.includes(selectedFile.value.type)) {
+      this.$message.error(
+        "不支持的文件类型。请上传PDF、DOC、DOCX或TXT文件。"
+      );
+      resetFile();
+      return;
+    }
+    if (selectedFile.value.size > 5 * 1024 * 1024) {
+      this.$message.error("文件大小不能超过5MB");
+      resetFile();
+      return;
+    }
+    fileName.value = selectedFile.value.name;
+    form.value.customName = fileName.value;
+  }
 };
 
 const submitForm = async () => {

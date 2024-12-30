@@ -13,13 +13,10 @@ const sourceApi={
   uploadImage(params) {
     return axios.post('/brt/source/upload/image', params, {
       headers: {
-        'Content-Type': 'multipart/form-data' // 设置请求头，告诉服务器发送的是文件
+        'Content-Type': 'multipart/form-data' // 设置请求头以处理文件上传
       }
     });
   },
-  download(){
-    return axios.post('/')
-  }
 };
 
 export default sourceApi;
