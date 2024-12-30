@@ -30,10 +30,13 @@
                 v-model="selectedAnswers[question.questionId]"
                 :disabled="!Iswrittable"
               >
-                <el-radio :value="'A'">A.{{ question.options[0] }}</el-radio>
-                <el-radio :value="'B'">B.{{ question.options[1] }}</el-radio>
-                <el-radio :value="'C'">C.{{ question.options[2] }}</el-radio>
-                <el-radio :value="'D'">D.{{ question.options[3] }}</el-radio>
+                <el-radio
+                  v-for="(option, index) in question.options"
+                  :key="index"
+                  :value="String.fromCharCode(65 + index)"
+                >
+                  {{ String.fromCharCode(65 + index) }}.{{ option }}
+                </el-radio>
               </el-radio-group>
             </template>
             <!--多选题-->
@@ -42,18 +45,13 @@
                 v-model="selectedAnswers[question.questionId]"
                 :disabled="!Iswrittable"
               >
-                <el-checkbox :label="'A'"
-                  >A.{{ question.options[0] }}</el-checkbox
+              <el-checkbox
+                  v-for="(option, index) in question.options"
+                  :key="index"
+                  :value="String.fromCharCode(65 + index)"
                 >
-                <el-checkbox :label="'B'"
-                  >B.{{ question.options[1] }}</el-checkbox
-                >
-                <el-checkbox :label="'C'"
-                  >C.{{ question.options[2] }}</el-checkbox
-                >
-                <el-checkbox :label="'D'"
-                  >D.{{ question.options[3] }}</el-checkbox
-                >
+                  {{ String.fromCharCode(65 + index) }}.{{ option }}
+                </el-checkbox>
               </el-checkbox-group>
             </template>
             <!-- 判断题 -->
@@ -149,10 +147,15 @@ const submitBtnText = computed(() => {
 const fetchData = async (bankid) => {
   try {
     const response = await questionApi.getQuestionList({
-    "bankId":bankid
-});
-
-    return response.data || []; // 返回空数组
+      bankId: bankid,
+    });
+    const data = response.data || [];
+    data.forEach((question) => {
+      if (question.options && typeof question.options === "string") {
+        question.options = JSON.parse(question.options); // 转换为数组
+      }
+    });
+    return data;
   } catch (error) {
     console.log("error", error);
   }
@@ -213,11 +216,9 @@ const scrollToQuestion = (id) => {
 
 // Mounted lifecycle
 onMounted(() => {
-
   fetchData(bankid).then((Data) => {
     questions.push(...Data);
   });
-  
 });
 </script>
 
