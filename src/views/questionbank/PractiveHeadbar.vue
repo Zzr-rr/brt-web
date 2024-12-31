@@ -15,7 +15,7 @@
           "
           size="small"
           @click="scrollToQuestion(item.questionId)"
-          :class="item.Isdone === undefined ? 'pending' : 'done'"
+          :class="selectedAnswers[item.questionId] === undefined ? 'pending' : 'done'"
         >
           {{ index + 1 }}
         </el-button>
@@ -35,6 +35,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    selectedAnswers:{
+      type:Array,
+      default:()=>[]
+    }
   },
   computed: {
     // Create a map for quick lookup of answers

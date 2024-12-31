@@ -4,6 +4,7 @@
       :questions="questions"
       @scroll-to-question="scrollToQuestion"
       :results="results"
+      :selectedAnswers="selectedAnswers"
     /><!--未传入-->
   </div>
   <div>
@@ -127,6 +128,7 @@ const bankid = route.params.id;
 const questions = reactive([]);
 const selectedAnswers = reactive({});
 const results = ref([]);
+const Isdone=ref(false);
 const totalCount = ref(0);
 const correctCount = ref(0);
 const isSubmitting = ref(false);
@@ -221,7 +223,7 @@ const formData=constructformData(questions, selectedAnswers);
   console.log("111",formData);
   isSubmitting.value = true;
   Iswrittable.value = false;
-
+  
   try {
     results.value = await uploadData(formData); // 等待上传数据完成
     console.log(results);
@@ -229,7 +231,7 @@ const formData=constructformData(questions, selectedAnswers);
     correctCount.value = results.value.data.filter(
       (question) => question.isCorrect
     ).length;
-    
+    Isdone.value=!Isdone.value;
     // 选择了 ${totalCount.value} 道题，
     const message = `你答对了 ${correctCount.value} 道题。`;
     ElMessageBox.alert(message, "考试结束啦>_<", {
