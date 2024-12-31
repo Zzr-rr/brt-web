@@ -17,11 +17,13 @@ import userQuestionProgressApi from "@/api/userQuestionProgress";
 import wrongQuestionApi from "@/api/userWrongQuestion";
 const totalCorrect = ref(0);
 const totalValue = ref(0);
+var errorQuestions={};
 var response = {};
 // 获取题库列表
 async function fetchQuestionList() {
   try {
     const response = await userQuestionProgressApi.getQuestionProgressList(); //返回题目列表
+    errorQuestions=await wrongQuestionApi.getWrongQuestionList();
     return response.data || []; // 如果返回数据为空，返回空数组
   } catch (error) {
     console.error("Failed to fetch question", error);
@@ -38,8 +40,10 @@ async function calculateNum() {
   } catch (error) {
     console.error("Failed to calucate question", error);
   }
-}
-response = fetchQuestionList();
+};
+onMounted(async()=>{
+  await calculateNum();
+})
 
 // 数据
 const databank = [

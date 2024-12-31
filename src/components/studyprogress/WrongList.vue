@@ -59,7 +59,6 @@
 import { computed } from "vue";
 import "element-plus/dist/index.css";
 import { ElIcon } from "element-plus";
-import userQuestionProgressApi from "@/api/userQuestionProgress";
 // const requestParam={};
 // const res = await userQuestionProgressApi.getQuestionProgressList(requestParam);
 //                             if (res?.code == 200) {
