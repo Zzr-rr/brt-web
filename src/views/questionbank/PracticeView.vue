@@ -208,16 +208,24 @@ const QuestionDone = (item) => {
 };
 
 const onSubmit = async () => {
-  console.log("200", selectedAnswers);
+  console.log("填入结果", selectedAnswers);
 
   const constructformData = (questions, selectedAnswers) => {
     return questions.map((question) => {
       const questionId = question.questionId;
-      const userAnswer = selectedAnswers[questionId];
+      var userAnswer = selectedAnswers[questionId];
       const options = question.options;
 
+      // if(selectedAnswers[questionId]==undefined){
+      //   return {
+      //     questionId: questionId,
+      //     userAnswer: "我是傻逼",
+      //   };
+      // }
       if (question.questionType === "SHORT_ANSWER") {
         // 单选题或简答题的处理
+        if(userAnswer==undefined)
+          userAnswer='null';
         return {
           questionId: questionId,
           userAnswer: userAnswer, // 用户直接选择的答案
@@ -226,6 +234,8 @@ const onSubmit = async () => {
         question.questionType === "MULTIPLE_CHOICE" ||
         question.questionType === "SINGLE_CHOICE"
       ) {
+        if(userAnswer==undefined)
+          userAnswer=[];
         // 多选题的处理
         const reconstructedAnswers = options.map((option) => {
           return {
@@ -238,24 +248,18 @@ const onSubmit = async () => {
           questionId: questionId,
           userAnswer: JSON.stringify(reconstructedAnswers), // 转为字符串存储
         };
-      } else {
-        // 其他情况（没有选中答案）
-        return {
-          questionId: questionId,
-          userAnswer: "",
-        };
       }
     });
   };
 
   const formData = constructformData(questions, selectedAnswers);
-  console.log("111", formData);
+  console.log("输入结果", formData);
   isSubmitting.value = true;
   Iswrittable.value = false;
 
   try {
     results.value = await uploadData(formData); // 等待上传数据完成
-    console.log(results.value);
+    console.log("返回计算结果",results.value);
     totalCount.value = results.value.length;
     correctCount.value = results.value.filter(
       (question) => question.isCorrect
