@@ -256,13 +256,13 @@ const onSubmit = async () => {
   try {
     results.value = await uploadData(formData); // 等待上传数据完成
     console.log(results.value);
-    // totalCount.value = results.value.data.length;
+    totalCount.value = results.value.length;
     correctCount.value = results.value.filter(
       (question) => question.isCorrect
     ).length;
     Isdone.value = !Isdone.value;
     // 选择了 ${totalCount.value} 道题，
-    const message = `你答对了 ${correctCount.value} 道题。`;
+    const message = `你一共做了 ${totalCount.value}题，一共答对了 ${correctCount.value} 道题！`;
     ElMessageBox.alert(message, "考试结束啦>_<", {
       confirmButtonText: "确定",
     }).then(() => {

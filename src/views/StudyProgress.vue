@@ -1,14 +1,14 @@
 <template>
   <div class="picsort">
     <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
-    <study-list :databank="databank" />
-    <WrongList :errorQuestions="errorQuestions" />
-    <Bar :databank="databank" />
+    <!-- <study-list :databank="databank" /> -->
+    <WrongList :errorQuestions="errorQuestions.value" />
+    <!-- <Bar :databank="databank" /> -->
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted ,reactive} from "vue";
 import Chart from "@/components/studyprogress/ChartPic.vue";
 import Bar from "@/components/studyprogress/BarPic.vue";
 import StudyList from "@/components/studyprogress/StudyList.vue";
@@ -17,13 +17,14 @@ import userQuestionProgressApi from "@/api/userQuestionProgress";
 import wrongQuestionApi from "@/api/userWrongQuestion";
 const totalCorrect = ref(0);
 const totalValue = ref(0);
-var errorQuestions={};
+const errorQuestions = reactive({});
+const databank = reactive({});
 var response = {};
 // 获取题库列表
 async function fetchQuestionList() {
   try {
     const response = await userQuestionProgressApi.getQuestionProgressList(); //返回题目列表
-    errorQuestions=await wrongQuestionApi.getWrongQuestionList();
+    errorQuestions.value=await wrongQuestionApi.getWrongQuestionList();
     return response.data || []; // 如果返回数据为空，返回空数组
   } catch (error) {
     console.error("Failed to fetch question", error);
@@ -34,9 +35,10 @@ async function calculateNum() {
   try {
     response = await fetchQuestionList();
     totalValue.value = response.length;
-    response.forEach((question) => {
-      if (question.isCorrect) totalCorrect.value++;
-    });
+    totalCorrect.value=response.filter((question)=>question.isCorrect).length;
+    // response.forEach((question) => {
+    //   if (question.isCorrect) totalCorrect.value++;
+    // });
   } catch (error) {
     console.error("Failed to calucate question", error);
   }
@@ -44,67 +46,6 @@ async function calculateNum() {
 onMounted(async()=>{
   await calculateNum();
 })
-
-// 数据
-const databank = [
-  {
-    value: 50,
-    correct: 20,
-    error: 30,
-    name: "高等数学",
-    tag: ["极限", "微积分"],
-  },
-  {
-    value: 70,
-    correct: 60,
-    error: 10,
-    name: "线性代数",
-    tag: ["整数的加减乘除"],
-  },
-  {
-    value: 1000,
-    correct: 200,
-    error: 800,
-    name: "元素反应",
-    tag: ["感电", "过载"],
-  },
-];
-const errorQuestions = [
-  {
-    name: "题目1",
-    tag: "线性代数",
-    difficulty: "简单",
-    solvePercentage: 80,
-  },
-  {
-    name: "题目2",
-    tag: "高等数学",
-    difficulty: "中等",
-    solvePercentage: 100,
-  },
-  {
-    name: "题目3",
-    tag: "元素反应",
-    difficulty: "困难",
-    solvePercentage: 40,
-  },
-];
-
-// 计算总值
-onMounted(() => {
-  const totals = databank.reduce(
-    (acc, b) => {
-      acc.totalCorrect += b.correct; // 累加正确的数量
-      acc.totalValue += b.value; // 累加总数
-      return acc;
-    },
-    { totalCorrect: 0, totalValue: 0 }
-  );
-
-  // 更新响应式的 totalCorrect 和 totalValue
-  totalCorrect.value = totals.totalCorrect;
-  totalValue.value = totals.totalValue;
-});
 </script>
 
 <style scoped>

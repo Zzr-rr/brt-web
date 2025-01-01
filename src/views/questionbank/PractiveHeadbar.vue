@@ -8,7 +8,7 @@
           :key="item.questionId"
           :type="
             resultMap[item.questionId] !== undefined
-              ? resultMap[item.id]
+              ? resultMap[item.questionId]
                 ? 'success'
                 : 'danger'
               : 'primary'
