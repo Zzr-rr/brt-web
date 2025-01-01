@@ -138,6 +138,8 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import 'element-plus/dist/index.css';
 import fileApi from '@/api/file'; // 确保路径正确
+import sourceApi from '@/api/source';
+import questionBankApi from '@/api/questionBank';
 
 const router = useRouter();
 const files = ref([]);
@@ -335,7 +337,7 @@ const submitUpdateForm = async () => {
   };
 
   try {
-    const response = await fileApi.updatefile(updateData); // 更新接口调用
+    const response = await fileApi.updateFile(updateData); // 更新接口调用
     if (response.code === 200) {
       alert("文件更新成功");
       closeUpdateForm();
