@@ -46,7 +46,7 @@
                 v-model="selectedAnswers[question.questionId]"
                 :disabled="!Iswrittable"
               >
-              <el-checkbox
+                <el-checkbox
                   v-for="(option, index) in question.options"
                   :key="index"
                   :value="option"
@@ -89,9 +89,34 @@
 
             <!-- 显示答案 -->
             <p v-if="Isdone" class="answer">
-              正确答案：<span class="correct">{{
-                question.correctAnswer
-              }}</span>
+              正确答案：
+              <span class="correct">
+                <!-- 判断是否为选择题 -->
+                <template
+                  v-if="
+                    question.questionType === 'SINGLE_CHOICE' ||
+                    question.questionType === 'MULTIPLE_CHOICE'
+                  "
+                >
+                  <!-- 选择题，过滤出正确答案 -->
+                  {{
+                    question.correctAnswer
+                      .filter((answer) => answer.isCorrect)
+                      .map((answer) => answer.content)
+                      .join(", ")
+                  }}
+                </template>
+
+                <!-- 填空题 -->
+                <template v-else>
+                  <!-- 如果是填空题，确保correctAnswer是数组，再执行join -->
+                  {{
+                    Array.isArray(question.correctAnswer)
+                      ? question.correctAnswer.join(", ")
+                      : question.correctAnswer
+                  }}
+                </template>
+              </span>
             </p>
           </div>
         </el-card>
@@ -128,7 +153,7 @@ const bankid = route.params.id;
 const questions = reactive([]);
 const selectedAnswers = reactive({});
 const results = ref([]);
-const Isdone=ref(false);
+const Isdone = ref(false);
 const totalCount = ref(0);
 const correctCount = ref(0);
 const isSubmitting = ref(false);
@@ -155,6 +180,7 @@ const fetchData = async (bankid) => {
     data.forEach((question) => {
       if (question.options && typeof question.options === "string") {
         question.options = JSON.parse(question.options); // 转换为数组
+        question.correctAnswer = JSON.parse(question.correctAnswer);
       }
     });
     return data;
@@ -182,56 +208,59 @@ const QuestionDone = (item) => {
 };
 
 const onSubmit = async () => {
-  console.log("200",selectedAnswers);
-  
+  console.log("200", selectedAnswers);
+
   const constructformData = (questions, selectedAnswers) => {
-  return questions.map((question) => {
-    const questionId = question.questionId;
-    const userAnswer = selectedAnswers[questionId]; 
-    const options = question.options;
+    return questions.map((question) => {
+      const questionId = question.questionId;
+      const userAnswer = selectedAnswers[questionId];
+      const options = question.options;
 
-    if (question.questionType === "SHORT_ANSWER") {
-      // 单选题或简答题的处理
-      return {
-        questionId: questionId,
-        userAnswer: userAnswer, // 用户直接选择的答案
-      };
-    } else if (question.questionType==="MULTIPLE_CHOICE"||question.questionType==="SINGLE_CHOICE") {
-      // 多选题的处理
-      const reconstructedAnswers = options.map((option) => {
+      if (question.questionType === "SHORT_ANSWER") {
+        // 单选题或简答题的处理
         return {
-          content: option,
-          isCorrect: userAnswer.includes(option), // 判断用户是否选择了该选项
+          questionId: questionId,
+          userAnswer: userAnswer, // 用户直接选择的答案
         };
-      });
+      } else if (
+        question.questionType === "MULTIPLE_CHOICE" ||
+        question.questionType === "SINGLE_CHOICE"
+      ) {
+        // 多选题的处理
+        const reconstructedAnswers = options.map((option) => {
+          return {
+            content: option,
+            isCorrect: userAnswer.includes(option), // 判断用户是否选择了该选项
+          };
+        });
 
-      return {
-        questionId: questionId,
-        userAnswer: JSON.stringify(reconstructedAnswers), // 转为字符串存储
-      };
-    } else {
-      // 其他情况（没有选中答案）
-      return {
-        questionId: questionId,
-        userAnswer: "",
-      };
-    }
-  });
-};
+        return {
+          questionId: questionId,
+          userAnswer: JSON.stringify(reconstructedAnswers), // 转为字符串存储
+        };
+      } else {
+        // 其他情况（没有选中答案）
+        return {
+          questionId: questionId,
+          userAnswer: "",
+        };
+      }
+    });
+  };
 
-const formData=constructformData(questions, selectedAnswers);
-  console.log("111",formData);
+  const formData = constructformData(questions, selectedAnswers);
+  console.log("111", formData);
   isSubmitting.value = true;
   Iswrittable.value = false;
-  
+
   try {
     results.value = await uploadData(formData); // 等待上传数据完成
-    console.log(results);
+    console.log(results.value);
     // totalCount.value = results.value.data.length;
-    correctCount.value = results.value.data.filter(
+    correctCount.value = results.value.filter(
       (question) => question.isCorrect
     ).length;
-    Isdone.value=!Isdone.value;
+    Isdone.value = !Isdone.value;
     // 选择了 ${totalCount.value} 道题，
     const message = `你答对了 ${correctCount.value} 道题。`;
     ElMessageBox.alert(message, "考试结束啦>_<", {
