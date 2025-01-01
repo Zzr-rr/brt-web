@@ -50,20 +50,60 @@
     </el-container>
   </el-card>
 </template>
-
 <script setup>
-import { computed,reactive} from "vue";
+import { computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import "element-plus/dist/index.css";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
-const router = useRouter();
-const databank=reactive([]);
+import questionBankApi from "@/api/questionBank";
 
-// 计算每个文件的进度百分比
+const router = useRouter();
+const databank = reactive([]);
+
+
+const fetchData = async () => {
+  try {
+  
+    const response = await questionBankApi.getBankList();
+    const bankList = response.data;  
+    console.log("请求getBankList",bankList);
+    
+    
+    for (let bank of bankList) {
+      const bankId = bank.bankId;
+      const title = bank.title;
+      
+      bank.keywords=JSON.parse(bank.keywords);
+      const progressData = await userQuestionProgressApi.getQuestionProgressbankList(
+        {bankId:bankId}
+      ); 
+      console.log("传入数据",progressData);
+      if(progressData.data==[])
+        continue;
+      const totalValue = progressData.data.length;
+      const totalCorrect = progressData.data
+    .filter(question => question !== null && question.isCorrect)
+    .length;
+      databank.push({
+        name: title,
+        value: totalValue,
+        correct: totalCorrect,
+        tag: bank.keywords || [], // 假设每个题库有tags
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching data", error);
+  }
+};
+
+// 在组件挂载时执行数据获取
+onMounted(() => {
+  fetchData();
+});
+
+// 计算每个题库的进度百分比
 const formattedFiles = computed(() => {
-  return props.databank.map((file) => {
-    file.solvePercentage =
-      file.value === 0 ? 0 : (file.correct / file.value) * 100;
+  return databank.map((file) => {
+    file.solvePercentage = file.value === 0 ? 0 : (file.correct / file.value) * 100;
     if (file.solvePercentage >= 80) {
       file.progressClass = "progress-green";
     } else if (file.solvePercentage >= 40) {
@@ -85,6 +125,7 @@ const someAction = (id) => {
   router.push({ name: "practice", params: { id } });
 };
 </script>
+
 
 <style scoped>
 .file {
@@ -123,6 +164,7 @@ const someAction = (id) => {
 }
 
 .custom-card {
+  overflow-y: auto; /* 启用纵向滚动条 */
   position: relative;
   width: 600px;
   max-width: 100%;
