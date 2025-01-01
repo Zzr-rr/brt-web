@@ -1,8 +1,8 @@
 <template>
   <div class="picsort">
     <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
-    <!-- <study-list :databank="databank" /> -->
-    <WrongList :errorQuestions="errorQuestions.value" />
+    <study-list/>
+    <!-- <WrongList :errorQuestions="errorQuestions.value" /> -->
     <!-- <Bar :databank="databank" /> -->
   </div>
 </template>
@@ -17,14 +17,13 @@ import userQuestionProgressApi from "@/api/userQuestionProgress";
 import wrongQuestionApi from "@/api/userWrongQuestion";
 const totalCorrect = ref(0);
 const totalValue = ref(0);
-const errorQuestions = reactive({});
-const databank = reactive({});
+// const errorQuestions = reactive({});
 var response = {};
 // 获取题库列表
 async function fetchQuestionList() {
   try {
     const response = await userQuestionProgressApi.getQuestionProgressList(); //返回题目列表
-    errorQuestions.value=await wrongQuestionApi.getWrongQuestionList();
+    // errorQuestions.value=await wrongQuestionApi.getWrongQuestionList();
     return response.data || []; // 如果返回数据为空，返回空数组
   } catch (error) {
     console.error("Failed to fetch question", error);

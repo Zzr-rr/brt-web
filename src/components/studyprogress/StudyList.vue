@@ -52,17 +52,12 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed,reactive} from "vue";
 import { useRouter } from "vue-router";
 import "element-plus/dist/index.css";
-
+import userQuestionProgressApi from "@/api/userQuestionProgress";
 const router = useRouter();
-const props = defineProps({
-  databank: {
-    required: true,
-    type: Array,
-  },
-});
+const databank=reactive([]);
 
 // 计算每个文件的进度百分比
 const formattedFiles = computed(() => {

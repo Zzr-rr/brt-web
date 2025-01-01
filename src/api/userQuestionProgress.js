@@ -8,6 +8,9 @@ const userQuestionProgressApi={
         const body={};
         return axios.post('/brt/userQuestionProgress/list',body);
     },
+    getQuestionProgressbankList(params){
+        return axios.post('/brt/userQuestionProgress/bank/list',params);
+    }
 };
 export default userQuestionProgressApi;
 
