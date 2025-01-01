@@ -1,10 +1,10 @@
 import axios from "@/api/axois";
 
-const wrongQuestionApi={
+const userWrongQuestionApi={
     getWrongQuestionList() {
         const body={};
-        return axios.post('/brt/file/list/personal',body);  // 假设这是获取文件列表的接口
+        return axios.post('/brt/userWrongQuestion/list',body);  // 假设这是获取文件列表的接口
     },
 };
 
-export default wrongQuestionApi;
+export default userWrongQuestionApi;

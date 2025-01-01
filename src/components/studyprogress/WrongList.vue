@@ -3,22 +3,34 @@
     <el-container class="error-list-container">
       <!-- 错题列表 -->
       <el-main>
-        <el-table :data="sortedErrorQuestions" size="large" class="error-table" stripe>
+        <el-table
+          :data="sortedErrorQuestions"
+          size="large"
+          class="error-table"
+          stripe
+        >
           <!-- 题目名称列 -->
           <el-table-column width="30">
             <template #default="{ row }">
-              <div :class="row.completed ? 'completed' : 'not-completed'">
-                <el-icon :class="row.completed ? 'completed-icon' : 'not-completed-icon'">
+              <div
+                :class="{
+                  'diff-orange': row.completed === 1,
+                  'diff-green': row.completed === 2,
+                  'diff-red': !row.completed,
+                }"
+              >
+                <el-icon>
                   <template v-if="row.completed">
-                    <el-icon><Check /></el-icon>
+                    <Check />
                   </template>
                   <template v-else>
-                    <el-icon><Close /></el-icon>
+                    <Close />
                   </template>
                 </el-icon>
               </div>
             </template>
           </el-table-column>
+
           <!-- 题目名列 -->
           <el-table-column
             prop="name"
@@ -34,13 +46,13 @@
           </el-table-column>
 
           <!-- 所属题库列 -->
-          <el-table-column label="所属" width="250">
+          <!-- <el-table-column label="复习状态" width="250">
             <template #default="{ row }">
-              <div class="tag-container">
+              <div :class="row.">
                 {{ row.tag }}
               </div>
             </template>
-          </el-table-column>
+          </el-table-column> -->
 
           <el-table-column prop="difficulty" label="难度" width="120">
             <template #default="{ row }">
@@ -56,29 +68,49 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, reactive,onMounted } from "vue";
 import "element-plus/dist/index.css";
 import { ElIcon } from "element-plus";
-// const requestParam={};
-// const res = await userQuestionProgressApi.getQuestionProgressList(requestParam);
-//                             if (res?.code == 200) {
-//                                 console.log("1");
-//                                 console.log(res.data);
-//                             }
-// 定义props，接收错题数据
-const props = defineProps({
-  errorQuestions: {
-    required: true,
-    type: Array,
-  },
-});
-
+import questionApi from "@/api/question";
+import userWrongQuestionApi from "@/api/userWrongQuestion";
+const errorQuestions = reactive([]);
+const fetchData = async () => {
+  try {
+    const response = await userWrongQuestionApi.getWrongQuestionList();
+    // console.log("获得错题信息", response);
+    const WrongQuestions = response.data;
+    for (let question of WrongQuestions) {
+      try{
+         const QuestionDetail = await questionApi.getSingleQuestion(
+        question.questionId
+      );
+      // console.log("QuestionDetail",question);
+      
+      const QuestionName = QuestionDetail.data.questionText;
+      const QuestionDifficulty = QuestionDetail.data.difficulty;
+      errorQuestions.push({
+        name: QuestionName,
+        difficulty: QuestionDifficulty,
+        reviewStatus: question.reviewStatus,
+      })
+    }catch(error){
+        console.log("error",error);
+        
+      };
+    }
+  } catch (error) {
+    console.log("error", error);
+  }
+};
+onMounted(()=>{
+  fetchData();
+})
 // 设置难度的颜色类
 const formattedDifficulty = computed(() => {
-  return props.errorQuestions.map((question) => {
-    if (question.difficulty === "简单") {
+  return errorQuestions.map((question) => {
+    if (question.difficulty === "EASY") {
       question.difficultyClass = "diff-green";
-    } else if (question.difficulty === "中等") {
+    } else if (question.difficulty === "MEDIUM") {
       question.difficultyClass = "diff-orange";
     } else {
       question.difficultyClass = "diff-red";
@@ -87,11 +119,12 @@ const formattedDifficulty = computed(() => {
   });
 });
 
-// 根据题目标签关联所属题库，直接使用对应的题库名称
 const formattedErrorQuestions = computed(() => {
   return formattedDifficulty.value.map((question) => {
     // 判断是否完成
-    question.completed = question.solvePercentage >= 100;
+    if (question.reviewStatus == "NOT_REVIEWED") question.completed = 0;
+    else if (question.reviewStatus == "REVIEWED") question.completed = 1;
+    else question.completed = 2;
     return question;
   });
 });
@@ -127,23 +160,6 @@ const sortedErrorQuestions = computed(() => {
 .file-tag {
   font-size: 12px;
 }
-
-.completed {
-  color: green;
-}
-
-.not-completed {
-  color: red;
-}
-
-.completed-icon {
-  color: green;
-}
-
-.not-completed-icon {
-  color: red;
-}
-
 /* 难度颜色样式 */
 .diff-green {
   color: green;
@@ -158,6 +174,7 @@ const sortedErrorQuestions = computed(() => {
 }
 
 .custom-card {
+  overflow-y: auto; /* 启用纵向滚动条 */
   position: relative;
   width: 600px;
   max-width: 100%;

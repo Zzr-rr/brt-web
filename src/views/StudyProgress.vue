@@ -2,7 +2,7 @@
   <div class="picsort">
     <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
     <study-list/>
-    <!-- <WrongList :errorQuestions="errorQuestions.value" /> -->
+    <WrongList  />
     <!-- <Bar :databank="databank" /> -->
   </div>
 </template>
@@ -14,7 +14,6 @@ import Bar from "@/components/studyprogress/BarPic.vue";
 import StudyList from "@/components/studyprogress/StudyList.vue";
 import WrongList from "@/components/studyprogress/WrongList.vue";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
-import wrongQuestionApi from "@/api/userWrongQuestion";
 const totalCorrect = ref(0);
 const totalValue = ref(0);
 // const errorQuestions = reactive({});
