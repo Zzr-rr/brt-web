@@ -21,6 +21,13 @@ const routes = [
   {
     path: "/study-progress",
     name: "study-progress",
+    children:[
+      {
+        path: "review/:id",
+        name: "review",
+        component: () => import("@/views/review/SingleQuestion.vue"),
+      }
+    ],
     component: () => import("@/views/StudyProgress.vue"),
   },
   {

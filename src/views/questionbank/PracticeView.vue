@@ -91,14 +91,14 @@
             <p v-if="Isdone" class="answer">
               正确答案：
               <span class="correct">
-                <!-- 判断是否为选择题 -->
+              
                 <template
                   v-if="
                     question.questionType === 'SINGLE_CHOICE' ||
                     question.questionType === 'MULTIPLE_CHOICE'
                   "
                 >
-                  <!-- 选择题，过滤出正确答案 -->
+               
                   {{
                     question.correctAnswer
                       .filter((answer) => answer.isCorrect)
@@ -165,12 +165,10 @@ const onClickLeft = () => {
   router.push({ name: "mybank" });
 };
 
-// Computed properties
 const submitBtnText = computed(() => {
   return isSubmitting.value ? "正在提交" : "提交";
 });
 
-// Methods
 const fetchData = async (bankid) => {
   try {
     const response = await questionApi.getQuestionList({
@@ -179,7 +177,7 @@ const fetchData = async (bankid) => {
     const data = response.data || [];
     data.forEach((question) => {
       if (question.options && typeof question.options === "string") {
-        question.options = JSON.parse(question.options); // 转换为数组
+        question.options = JSON.parse(question.options); 
         question.correctAnswer = JSON.parse(question.correctAnswer);
       }
     });
@@ -194,7 +192,7 @@ const uploadData = async (formData) => {
     const response = await userQuestionProgressApi.uploadQuestionProgress(
       formData
     );
-    return response.data || []; // 返回空数组
+    return response.data || []; 
   } catch (error) {
     console.log("error", error);
   }
@@ -215,13 +213,6 @@ const onSubmit = async () => {
       const questionId = question.questionId;
       var userAnswer = selectedAnswers[questionId];
       const options = question.options;
-
-      // if(selectedAnswers[questionId]==undefined){
-      //   return {
-      //     questionId: questionId,
-      //     userAnswer: "我是傻逼",
-      //   };
-      // }
       if (question.questionType === "SHORT_ANSWER") {
         // 单选题或简答题的处理
         if(userAnswer==undefined)

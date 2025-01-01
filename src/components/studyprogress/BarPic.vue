@@ -1,46 +1,56 @@
 <template>
   <el-card class="custom-card">
-    <div ref="chartContainer" style="width: 600px; height: 300px;"></div>
+    <div ref="chartContainer" style="width: 800px; height: 300px;"></div>
   </el-card>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, reactive } from "vue";
 import * as echarts from "echarts";
-const datebank=[
-  {
-    name:11.24,
-    correct:8,
-    error:2,
-  },
-  {
-    name:11.25,
-    correct:30,
-    error:13,
-  },
-  {
-    name:11.26,
-    correct:5,
-    error:4,
-  },
-  {
-    name:11.27,
-    correct:10,
-    error:2,
-  },
-  {
-    name:11.28,
-    correct:20,
-    error:5,
+import questionBankApi from "@/api/questionBank";
+
+// 用于存储标签及其计数的对象
+const databank1 = reactive({});
+let datebank = [];
+
+// 获取题库数据并统计标签
+const fetchData = async () => {
+  try {
+    // 获取题库列表
+    const response = await questionBankApi.getBankList();
+    const QuestionList = response.data;
+
+    // 遍历所有题库项
+    for (let QuestionItem of QuestionList) {
+      // 解析每个题目的 keywords 字段，假设它是 JSON 字符串
+      const QuestionKeyWords = JSON.parse(QuestionItem.keywords);
+
+      // 遍历每个标签
+      for (let item of QuestionKeyWords) {
+        // 如果标签已存在，则增加计数，否则初始化计数为1
+        if (databank1[item]) {
+          databank1[item]++;
+        } else {
+          databank1[item] = 1;
+        }
+      }
+    }
+
+    // 将标签按出现次数排序，并取前5个
+    datebank = Object.entries(databank1)
+      .sort((a, b) => b[1] - a[1])  // 按计数从大到小排序
+      .slice(0, 7)  // 取前5个标签
+      .map(item => ({
+        name: item[0],  // 标签名
+        count: item[1]  // 标签的计数
+      }));
+
+    updateChart();  // 数据获取完毕后更新图表
+
+  } catch (error) {
+    console.log("error", error);
   }
-];
-// 定义 props，接收来自父组件的数据
-// const props = defineProps({
-//   databank: {
-//     required: true,
-//     type: Array,
-//   },
-// });
+};
 
 // 图表容器引用
 const chartContainer = ref(null);
@@ -48,16 +58,25 @@ let myChart = null;
 
 // 更新图表的配置和数据
 const updateChart = () => {
-  if (myChart) {
-    // const subjects = props.databank.map(item => item.name);  
-    // const correctData = props.databank.map(item => item.correct); 
-    // const errorData = props.databank.map(item => item.error); 
-    const subjects = datebank.map(item => item.name);  
-    const correctData = datebank.map(item => item.correct); 
-    const errorData = datebank.map(item => item.error); 
+  if (myChart && datebank.length > 0) {
+    const tags = datebank.map(item => item.name);  // 标签名
+    const counts = datebank.map((item, index) => {
+      // 根据索引动态设置柱子的颜色
+      let color = "#34D160"; // 默认绿色
+      if (item.count>10&&(index===0||index===1)) color = "#FF6A6A"; // 第一名：红色
+      else if (item.count>4&&(index===2||index===3)) color = "#FFD700"; // 第二名：黄色
+
+      return {
+        value: item.count,
+        itemStyle: {
+          color, // 动态颜色
+        },
+      };
+    });
+
     const option = {
       title: {
-        text: '学习进度',
+        text: '题库标签统计',
         left: 'center',
         textStyle: {
           fontSize: 16,
@@ -79,7 +98,7 @@ const updateChart = () => {
       },
       xAxis: {
         type: 'category',
-        data: subjects, 
+        data: tags, // 使用标签名作为 X 轴
         axisLabel: {
           color: 'white'
         },
@@ -102,35 +121,11 @@ const updateChart = () => {
       },
       series: [
         {
-          name: '正确',
+          name: '标签数',
           type: 'bar',
-          stack: 'total',  
-          data: correctData, 
-          itemStyle: {
-            color: '#34D160' 
-          },
+          data: counts, // 使用动态颜色数据
           barWidth: 50,
-        },
-        {
-          name: '错误',
-          type: 'bar',
-          stack: 'total', 
-          data: errorData,  
-          itemStyle: {
-            color: '#FF6A6A'
-          },
-          barWidth: 50,  
-        },
-        // {
-        //   name: '总量',
-        //   type: 'bar',
-        //   stack: 'total',  // 堆叠的标识
-        //   data: 2,  // 总的做题量
-        //   itemStyle: {
-        //     color: '#D3D3D3' // 灰色背景
-        //   },
-        //   barWidth: 30,
-        // }
+        }
       ],
       // 控制柱子间的间隙
       barGap: '0%', 
@@ -141,10 +136,11 @@ const updateChart = () => {
   }
 };
 
+// 在组件加载时调用 fetchData 方法
 onMounted(() => {
   nextTick(() => {
     myChart = echarts.init(chartContainer.value);
-    updateChart();
+    fetchData();  
   });
 });
 </script>
@@ -152,11 +148,16 @@ onMounted(() => {
 <style scoped>
 .custom-card {
   position: sticky;
-  width: 625px; height: 350px;
+  width: 900px !important; height: 350px;
   border-radius: 2%;
   color: white;
   font-size: 24px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   background-color:  rgb(40,46,72);
 }
+
+#chartContainer{
+  width: 100%;
+}
+
 </style>

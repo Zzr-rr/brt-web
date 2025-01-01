@@ -128,7 +128,7 @@ watch(
 <style scoped>
 .custom-card {
   position: sticky;
-  width: 500px; height: 350px;
+  width: 600px; height: 350px;
   border-radius: 2%;
   background-color:  rgb(40,46,72);
   color: white;

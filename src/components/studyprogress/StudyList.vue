@@ -1,7 +1,7 @@
 <template>
+  
   <el-card class="custom-card" shadow="hover">
     <el-container class="file-list-container">
-      <!-- 文件列表 -->
       <el-main>
         <el-table :data="sortedFiles" size="large" class="file" stripe>
           <el-table-column
@@ -87,7 +87,7 @@ const fetchData = async () => {
         name: title,
         value: totalValue,
         correct: totalCorrect,
-        tag: bank.keywords || [], // 假设每个题库有tags
+        tag: bank.keywords || [], 
       });
     }
   } catch (error) {
@@ -95,12 +95,12 @@ const fetchData = async () => {
   }
 };
 
-// 在组件挂载时执行数据获取
+
 onMounted(() => {
   fetchData();
 });
 
-// 计算每个题库的进度百分比
+
 const formattedFiles = computed(() => {
   return databank.map((file) => {
     file.solvePercentage = file.value === 0 ? 0 : (file.correct / file.value) * 100;
@@ -138,7 +138,6 @@ const someAction = (id) => {
 .file-list-container {
   width: 100%;
   margin: auto;
-  margin-top: 20px;
 }
 
 .tag-container {
@@ -164,9 +163,9 @@ const someAction = (id) => {
 }
 
 .custom-card {
-  overflow-y: auto; /* 启用纵向滚动条 */
+  overflow-y: auto; 
   position: relative;
-  width: 600px;
+  width: 650px;
   max-width: 100%;
   height: 400px;
   border-radius: 2%;
