@@ -121,9 +121,9 @@
           </div>
         </el-card>
       </div>
-
-      <el-empty v-else description="没有题目" />
-
+      <div v-if="questionLoading" class="loading-father">
+        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
+      </div>
       <el-button
         ref="submitButton"
         block
@@ -134,6 +134,7 @@
       >
         {{ submitBtnText }}
       </el-button>
+      
     </el-main>
   </div>
 </template>
@@ -145,10 +146,12 @@ import { useRouter, useRoute } from "vue-router";
 import PractiveHeadbar from "./PractiveHeadbar.vue";
 import questionApi from "@/api/question";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
-
+import {useItemStore} from '@/store/modules/CommentStore'
+import { storeToRefs } from "pinia";
 const route = useRoute();
 const bankid = route.params.id;
-
+const QuestionLoading=useItemStore();
+const {questionLoading}=storeToRefs(QuestionLoading);
 // State
 const questions = reactive([]);
 const selectedAnswers = reactive({});
@@ -171,6 +174,7 @@ const submitBtnText = computed(() => {
 
 const fetchData = async (bankid) => {
   try {
+    QuestionLoading.setquestionLodaing(true);
     const response = await questionApi.getQuestionList({
       bankId: bankid,
     });
@@ -181,6 +185,7 @@ const fetchData = async (bankid) => {
         question.correctAnswer = JSON.parse(question.correctAnswer);
       }
     });
+    QuestionLoading.setquestionLodaing(false);
     return data;
   } catch (error) {
     console.log("error", error);
@@ -285,6 +290,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.loading-father{
+  width: 100%;
+  height: 100px;
+  justify-content: center; 
+  display: flex;
+}
+.loading{
+  align-items: center; /* 垂直居中 */
+}
 .answer {
   color: red;
   margin-bottom: 0;

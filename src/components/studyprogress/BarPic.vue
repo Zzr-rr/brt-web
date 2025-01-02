@@ -8,7 +8,6 @@
 import { ref, onMounted, nextTick, reactive } from "vue";
 import * as echarts from "echarts";
 import questionBankApi from "@/api/questionBank";
-
 // 用于存储标签及其计数的对象
 const databank1 = reactive({});
 let datebank = [];
@@ -25,9 +24,9 @@ const fetchData = async () => {
       // 解析每个题目的 keywords 字段，假设它是 JSON 字符串
       const QuestionKeyWords = JSON.parse(QuestionItem.keywords);
 
-      // 遍历每个标签
+  
       for (let item of QuestionKeyWords) {
-        // 如果标签已存在，则增加计数，否则初始化计数为1
+       
         if (databank1[item]) {
           databank1[item]++;
         } else {
@@ -36,16 +35,15 @@ const fetchData = async () => {
       }
     }
 
-    // 将标签按出现次数排序，并取前5个
+   
     datebank = Object.entries(databank1)
-      .sort((a, b) => b[1] - a[1])  // 按计数从大到小排序
-      .slice(0, 7)  // 取前5个标签
+      .sort((a, b) => b[1] - a[1])  
+      .slice(0, 7)  
       .map(item => ({
-        name: item[0],  // 标签名
-        count: item[1]  // 标签的计数
+        name: item[0],  
+        count: item[1]  
       }));
-
-    updateChart();  // 数据获取完毕后更新图表
+    updateChart(); 
 
   } catch (error) {
     console.log("error", error);

@@ -48,6 +48,9 @@
         </el-table>
       </el-main>
     </el-container>
+    <div v-if="learningbanklistLoading" class="loading-father">
+        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
+      </div>
   </el-card>
 </template>
 <script setup>
@@ -55,14 +58,16 @@ import { computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
 import questionBankApi from "@/api/questionBank";
-
+import { useItemStore } from "@/store/modules/CommentStore";
+import { storeToRefs } from "pinia";
 const router = useRouter();
+const databank1=reactive([]);
 const databank = reactive([]);
-
-
+const StudyLoading=useItemStore();
+const {learningbanklistLoading}=storeToRefs(StudyLoading);
 const fetchData = async () => {
   try {
-  
+    StudyLoading.setlearningbanklistLoading(true);
     const response = await questionBankApi.getBankList();
     const bankList = response.data;  
     console.log("请求getBankList",bankList);
@@ -83,13 +88,15 @@ const fetchData = async () => {
       const totalCorrect = progressData.data
     .filter(question => question !== null && question.isCorrect)
     .length;
-      databank.push({
+      databank1.push({
         name: title,
         value: totalValue,
         correct: totalCorrect,
         tag: bank.keywords || [], 
       });
     }
+    StudyLoading.setlearningbanklistLoading(false);
+    databank.splice(0, databank.length, ...databank1);  // 更新 databank
   } catch (error) {
     console.error("Error fetching data", error);
   }
@@ -134,7 +141,15 @@ const someAction = (id) => {
   font-size: 13px;
   width: 100%;
 }
-
+.loading-father{
+  width: 100%;
+  height: 100px;
+  justify-content: center; 
+  display: flex;
+}
+.loading{
+  align-items: center; /* 垂直居中 */
+}
 .file-list-container {
   width: 100%;
   margin: auto;

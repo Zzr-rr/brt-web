@@ -1,6 +1,7 @@
 <template>
   <el-card class="custom-card" shadow="hover">
     <el-container class="error-list-container">
+     
       <el-main>
         <el-table
           :data="sortedErrorQuestions"
@@ -8,6 +9,7 @@
           class="error-table"
           stripe
         >
+        
           <el-table-column width="30">
             <template #default="{ row }">
               <div
@@ -62,24 +64,37 @@
         </el-table>
       </el-main>
     </el-container>
+    <div v-if="learingWronglistLoading" class="loading-father">
+        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
+      </div>
   </el-card>
 </template>
 
 <script setup>
-import { computed, reactive,onMounted } from "vue";
-import {useRouter} from "vue-router"
+import { computed, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 import "element-plus/dist/index.css";
 import { ElIcon } from "element-plus";
 import questionApi from "@/api/question";
 import userWrongQuestionApi from "@/api/userWrongQuestion";
-const router=useRouter();
+import { useItemStore } from "@/store/modules/CommentStore";
+import { storeToRefs } from "pinia";
+const WronglistLoading = useItemStore();
+const { learingWronglistLoading } = storeToRefs(WronglistLoading);
+const router = useRouter();
 const errorQuestions = reactive([]);
-const Pushreview=(id)=>{
-  router.push({name:"review", params: { id }})
-    .catch((error)=>{console.log("error",error)});
-  };
+
+const Pushreview = (id) => {
+  router.push({ name: "review", params: { id } }).catch((error) => {
+    console.log("error", error);
+  });
+};
+
 const fetchData = async () => {
   try {
+    // 更新 loading 状态
+   WronglistLoading.setlearingWronglistLoading(true);
+
     const response = await userWrongQuestionApi.getWrongQuestionList();
     const WrongQuestions = response.data;
 
@@ -93,8 +108,9 @@ const fetchData = async () => {
         }))
       )
     );
+    // 请求完成后关闭 loading
+    WronglistLoading.setlearingWronglistLoading(false);
 
-    // 处理结果
     errorQuestions.push(
       ...questionDetails.map((detail) => ({
         name: detail.questionText,
@@ -108,9 +124,10 @@ const fetchData = async () => {
   }
 };
 
-onMounted(()=>{
+onMounted(() => {
   fetchData();
-})
+});
+
 // 设置难度的颜色类
 const formattedDifficulty = computed(() => {
   return errorQuestions.map((question) => {
@@ -142,7 +159,17 @@ const sortedErrorQuestions = computed(() => {
 });
 </script>
 
+
 <style scoped>
+.loading-father{
+  width: 100%;
+  height: 100px;
+  justify-content: center; 
+  display: flex;
+}
+.loading{
+  align-items: center; /* 垂直居中 */
+}
 .error-table {
   color: black;
   font-family: "Microsoft YaHei", sans-serif;
@@ -160,7 +187,10 @@ const sortedErrorQuestions = computed(() => {
   gap: 8px;
   align-items: center;
 }
-
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 .file-tag {
   font-size: 12px;
 }

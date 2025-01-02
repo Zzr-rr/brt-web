@@ -76,10 +76,11 @@
         </div>
       </el-card>
     </div>
-
     <!-- 无题目显示空状态 -->
-    <el-empty v-else description="没有题目" />
-
+    <!-- <el-empty v-else description="没有题目" /> -->
+    <div v-if="SingleQuestionLoading" class="loading-father">
+        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
+      </div>
     <!-- 提交按钮 -->
     <el-button
       block
@@ -99,7 +100,10 @@ import { ElMessageBox } from "element-plus";
 import { useRouter, useRoute } from "vue-router";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
 import questionApi from "@/api/question";
-
+import {useItemStore} from '@/store/modules/CommentStore'
+import { storeToRefs } from "pinia";
+const QuestionLoading=useItemStore();
+const {SingleQuestionLoading}=storeToRefs(QuestionLoading);
 const route = useRoute();
 const QuestionId = route.params.id;
 // State
@@ -122,6 +126,7 @@ const submitBtnText = computed(() => {
 
 const fetchData = async () => {
   try {
+    QuestionLoading.setSingleQuestionLoading(true);
     const response = await questionApi.getSingleQuestion(QuestionId);
     const data = response.data || {};
 
@@ -132,9 +137,10 @@ const fetchData = async () => {
     if (data.correctAnswer && typeof data.correctAnswer === "string") {
       data.correctAnswer = JSON.parse(data.correctAnswer);
     }
-    console.log("data.correctAnswer",data.correctAnswer);
+    
     
     question.value = data; 
+    QuestionLoading.setSingleQuestionLoading(false);
   } catch (error) {
     console.error("获取题目失败:", error);
   }
@@ -194,6 +200,15 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.loading-father{
+  width: 100%;
+  height: 100px;
+  justify-content: center; 
+  display: flex;
+}
+.loading{
+  align-items: center; /* 垂直居中 */
+}
 .answer {
   color: red;
   margin-bottom: 0;
