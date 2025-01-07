@@ -23,7 +23,7 @@
         </el-sub-menu>
         <el-sub-menu index="/file">
             <template #title>
-                <el-icon><icon-menu /></el-icon>
+                <el-icon><Folder /></el-icon>
                 <span>文件</span>
             </template>
             <el-menu-item-group>
@@ -36,11 +36,11 @@
             </el-menu-item-group>
         </el-sub-menu>
         <el-menu-item index="/study-progress">
-            <el-icon><icon-menu /></el-icon>
+            <el-icon><Histogram /></el-icon>
             <span>学习进度管理</span>
         </el-menu-item>
         <el-menu-item index="/wrong-list">
-            <el-icon><icon-menu /></el-icon>
+            <el-icon><Close /></el-icon>
             <span>错题记录</span>
         </el-menu-item>
         <el-menu-item index="/settings">
