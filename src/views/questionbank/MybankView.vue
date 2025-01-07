@@ -68,6 +68,7 @@ import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import questionBankApi from '@/api/questionBank';
 import sourceApi from '@/api/source'; // 引入新的 API
+import { formatDateTime } from '@/utils';
 
 const Banks = ref([]);
 const transformedBanks = ref([]);
@@ -266,7 +267,7 @@ const transformBanks = async () => {
       id: bank.bankId,
       name: bank.title,
       des: bank.description,
-      modified: bank.createdAt,
+      modified: formatDateTime(bank.createdAt),
       fileUrl,
       tag: JSON.parse(bank.keywords),
       hover: false // 新增字段用于悬停状态
