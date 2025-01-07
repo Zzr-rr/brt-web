@@ -10,7 +10,10 @@
           stripe
         >
         
-          <el-table-column width="30">
+          <el-table-column 
+          label="状态"
+
+          class="status-column">
             <template #default="{ row }">
               <div
                 :class="{
@@ -19,14 +22,7 @@
                   'diff-red': !row.completed,
                 }"
               >
-                <el-icon>
-                  <template v-if="row.completed">
-                    <Check />
-                  </template>
-                  <template v-else>
-                    <Close />
-                  </template>
-                </el-icon>
+                {{ row.reviewStatus }}
               </div>
             </template>
           </el-table-column>
@@ -35,7 +31,7 @@
           <el-table-column
             prop="name"
             label="题目名"
-            width="200"
+            
             class="name-column"
           >
             <template #default="{ row }" >
@@ -153,14 +149,16 @@ const formattedErrorQuestions = computed(() => {
 });
 
 const sortedErrorQuestions = computed(() => {
-  return [...formattedErrorQuestions.value].sort(
-    (a, b) => b.completed - a.completed
-  );
+  return [...formattedErrorQuestions.value]
 });
 </script>
 
 
 <style scoped>
+.status-column {
+  width: 100px;
+}
+
 .loading-father{
   width: 100%;
   height: 100px;
@@ -210,7 +208,7 @@ const sortedErrorQuestions = computed(() => {
 .custom-card {
   overflow-y: auto; /* 启用纵向滚动条 */
   position: relative;
-  width: 450px;
+  width: 100%;
   max-width: 100%;
   height: 400px;
   border-radius: 2%;

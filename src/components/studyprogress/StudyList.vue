@@ -13,7 +13,7 @@
             <template #default="{ row }">
               <div 
                 class="name-cell" 
-                @click="someAction(row.name)"
+                @click="someAction(row.id)"
               >
                 {{ row.name }}
               </div>
@@ -53,6 +53,7 @@
       </div>
   </el-card>
 </template>
+
 <script setup>
 import { computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -65,78 +66,55 @@ const databank1=reactive([]);
 const databank = reactive([]);
 const StudyLoading=useItemStore();
 const {learningbanklistLoading}=storeToRefs(StudyLoading);
+
+
 const fetchData = async () => {
   try {
     StudyLoading.setlearningbanklistLoading(true);
-    const response = await questionBankApi.getBankList();
-    const bankList = response.data;  
-    console.log("请求getBankList",bankList);
-    
-    
+    const response = await userQuestionProgressApi.getBankinfoList();
+    const bankList = response.data;
+    console.log("请求getBankinfoList",bankList);
+
     for (let bank of bankList) {
-      const bankId = bank.bankId;
-      const title = bank.title;
-      
-      bank.keywords=JSON.parse(bank.keywords);
-      const progressData = await userQuestionProgressApi.getQuestionProgressbankList(
-        {bankId:bankId}
-      ); 
-      console.log("传入数据",progressData);
-      if(progressData.data==[])
-        continue;
-      const totalValue = progressData.data.length;
-      const totalCorrect = progressData.data
-    .filter(question => question !== null && question.isCorrect)
-    .length;
+
       databank1.push({
-        name: title,
-        value: totalValue,
-        correct: totalCorrect,
-        tag: bank.keywords || [], 
-      });
+          id: bank.bankId,
+          name: bank.bankName,
+          value: bank.totalNum,
+          tag: JSON.parse(bank.keywords),
+          solvePercentage: bank.correctNum/bank.totalNum*100,
+          progressClass: (bank.correctNum/bank.totalNum >= 0.6 ? "progress-green" : "progress-red"),
+        });
+
     }
+
+
     StudyLoading.setlearningbanklistLoading(false);
-    databank.splice(0, databank.length, ...databank1);  // 更新 databank
   } catch (error) {
     console.error("Error fetching data", error);
   }
-};
+}
 
 
 onMounted(() => {
   fetchData();
 });
 
+// 将 databank1 作为 sortedFiles 暴露给模板
+const sortedFiles = computed(() => databank1);
 
-const formattedFiles = computed(() => {
-  return databank.map((file) => {
-    file.solvePercentage = file.value === 0 ? 0 : (file.correct / file.value) * 100;
-    if (file.solvePercentage >= 80) {
-      file.progressClass = "progress-green";
-    } else if (file.solvePercentage >= 40) {
-      file.progressClass = "progress-yellow";
-    } else {
-      file.progressClass = "progress-red";
-    }
-    return file;
-  });
-});
-
-// 排序文件列表，按照进度百分比从小到大排序
-const sortedFiles = computed(() => {
-  return [...formattedFiles.value].sort((a, b) => a.solvePercentage - b.solvePercentage);
-});
 
 const someAction = (id) => {
-  alert(`操作文件ID: ${id}`);
   router.push({ name: "practice", params: { id } });
 };
 </script>
 
 
+
+
 <style scoped>
 .file {
-  color: black;
+  
   font-family: "Microsoft YaHei", sans-serif;
   font-size: 13px;
   width: 100%;

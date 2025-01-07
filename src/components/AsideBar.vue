@@ -39,6 +39,10 @@
             <el-icon><icon-menu /></el-icon>
             <span>学习进度管理</span>
         </el-menu-item>
+        <el-menu-item index="/wrong-list">
+            <el-icon><icon-menu /></el-icon>
+            <span>错题记录</span>
+        </el-menu-item>
         <el-menu-item index="/settings">
             <el-icon>
                 <setting />

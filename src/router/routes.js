@@ -31,6 +31,18 @@ const routes = [
     component: () => import("@/views/StudyProgress.vue"),
   },
   {
+    path: "/wrong-list",
+    name: "wrong-list",
+    children:[
+      {
+        path: "review/:id",
+        name: "review",
+        component: () => import("@/views/review/SingleQuestion.vue"),
+      }
+    ],
+    component: () => import("@/views/WrongList.vue"),
+  },
+  {
     path: "/home/:id",
     name: "ItemDetail",
     component: () => import("@/views/TestView.vue"),

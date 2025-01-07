@@ -1,9 +1,7 @@
 <template>
     <!-- 静态部分，默认显示 -->
     <div v-if="$route.name !== 'review'" class="picsort">
-      <Chart :totalCorrect="totalCorrect" :totalValue="totalValue" />
-      <study-list/>
-      <Bar />
+      <WrongList/>
     </div>
 
     <div>
