@@ -15,7 +15,7 @@
 <script setup>
 import { ref,onMounted } from 'vue';
 import authApi from '@/api/auth';
-import MonkeyGodImg from '@/assets/images/MonkeyGod.png';
+import MonkeyGodImg from '@/assets/images/card3.png';
 
 const carouselItems = ref([
   { imgUrl: MonkeyGodImg, caption: 'Slide 1' },
