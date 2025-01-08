@@ -21,6 +21,11 @@
             </div>
             <div class="desc">{{ item.des }}</div>
             <div class="bottom">{{ item.modified }}</div>
+            <div class="completed">
+              <el-tag :type="item.isCompleted ? 'success' : 'danger'">
+                {{ item.isCompleted ? '已生成' : '未生成' }}
+              </el-tag>
+            </div>
           </div>
         </div>
       </el-col>
@@ -250,6 +255,7 @@ const transformBanks = async () => {
   let processedBanks = 0;
 
   await Promise.all(Banks.value.map(async (bank) => {
+    console.log(123, bank);
     let fileUrl = bank.coverUrl;
     if (bank.coverUrl) {
       try {
@@ -269,6 +275,7 @@ const transformBanks = async () => {
       des: bank.description,
       modified: formatDateTime(bank.createdAt),
       fileUrl,
+      isCompleted: bank.isCompleted,
       tag: JSON.parse(bank.keywords),
       hover: false // 新增字段用于悬停状态
     };

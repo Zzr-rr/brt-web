@@ -15,6 +15,11 @@
             </div>  
             <div class="desc">{{ item.des }}</div>  
             <div class="bottom">{{ item.modified }}</div>  
+            <div class="completed">
+              <el-tag :type="item.isCompleted ? 'success' : 'danger'">
+                {{ item.isCompleted ? '已生成' : '未生成' }}
+              </el-tag>
+            </div>
           </div>  
         </div>  
       </el-col>  
@@ -72,6 +77,7 @@
         name: bank.title,  
         des: bank.description,  
         modified: bank.createdAt, // 或者选择 updatedAt  
+        isCompleted: bank.isCompleted,
         fileUrl: bank.coverUrl, // 封面url  
         tag: JSON.parse(bank.keywords) // 将 JSON 字符串转换为数组  未在封面进行显示！！
       };  
