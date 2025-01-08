@@ -31,7 +31,7 @@ const routes = [
   {
     path: "/Community",
     name: "Community",
-    component: () => import("@/views/Community.vue"),
+    component: () => import("@/views/CommunityPlace.vue"),
   },
   {
     path: "/study-progress",
@@ -50,7 +50,7 @@ const routes = [
     name: "wrong-list",
     children:[
       {
-        path: "review/:id",
+        path: "review/:questionId/:wrongId",
         name: "review",
         component: () => import("@/views/review/SingleQuestion.vue"),
       }
@@ -99,11 +99,9 @@ const routes = [
         component: () => import("@/views/questionbank/SquareView.vue"),
       },
       {
-        // path: "practice",
         path: "practice/:id", // 添加动态段来匹配id参数
         name: "practice",
         component: () => import("@/views/questionbank/PracticeView.vue"),
-        //component : () => console.log('Practice ID:', this.params.id),
         props:true,
       },
     ],

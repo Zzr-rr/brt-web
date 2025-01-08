@@ -35,7 +35,7 @@
             class="name-column"
           >
             <template #default="{ row }" >
-              <div class="name-cell" @click="Pushreview(row.QuestionID)">
+              <div class="name-cell" @click="Pushreview(row.questionId,row.wrongId)">
                 {{ row.name }}
               </div>
             </template>
@@ -70,7 +70,7 @@
 import { computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import "element-plus/dist/index.css";
-import { ElIcon } from "element-plus";
+// import { ElIcon } from "element-plus";
 import { useItemStore } from "@/store/modules/CommentStore";
 import { storeToRefs } from "pinia";
 import userWrongQuestionApi from "@/api/userWrongQuestion";
@@ -79,8 +79,8 @@ const { learingWronglistLoading } = storeToRefs(WronglistLoading);
 const router = useRouter();
 const errorQuestions = reactive([]);
 
-const Pushreview = (id) => {
-  router.push({ name: "review", params: { id } }).catch((error) => {
+const Pushreview = (questionId, wrongId) => {
+  router.push({ name: "review", params: { questionId, wrongId } }).catch((error) => {
     console.log("error", error);
   });
 };
@@ -97,7 +97,8 @@ const fetchData = async () => {
         reviewStatus: info.reviewStatus,
         name: info.questionText,
         difficulty: info.difficulty,
-        QuestionID: info.questionId,
+        questionId: info.questionId,
+        wrongId:info.wrongId,
         difficultyClass: (info.difficulty === "EASY" ? "diff-green" : (info.difficulty === "MEDIUM" ? "diff-orange" : "diff-red")),
       })
     }

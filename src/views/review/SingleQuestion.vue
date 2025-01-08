@@ -4,10 +4,8 @@
     <el-header>
       <el-button @click="onClickLeft" icon="HomeFilled" text>返回</el-button>
     </el-header>
-    <!-- 题目卡片 -->
     <div v-if="question">
       <el-card class="question-card" :style="{ margin: '10px' }">
-        <!-- 选择题 -->
         <div class="question-content">
           <h3>{{ question.questionText }}</h3>
           <template v-if="question.questionType === 'SINGLE_CHOICE'">
@@ -48,58 +46,61 @@
 
           <!-- 显示正确答案 -->
           <p v-if="IsDone" class="answer">
-              正确答案：
-              <span class="correct">
-                <template
-                  v-if="
-                    question.questionType === 'SINGLE_CHOICE' ||
-                    question.questionType === 'MULTIPLE_CHOICE'
-                  "
-                >
-                  {{
-                    question.correctAnswer
-                      .filter((answer) => answer.isCorrect)
-                      .map((answer) => answer.content)
-                      .join(", ")
-                  }}
-                </template>
+            正确答案：
+            <span class="correct">
+              <template
+                v-if="
+                  question.questionType === 'SINGLE_CHOICE' ||
+                  question.questionType === 'MULTIPLE_CHOICE'
+                "
+              >
+                {{
+                  question.correctAnswer
+                    .filter((answer) => answer.isCorrect)
+                    .map((answer) => answer.content)
+                    .join(", ")
+                }}
+              </template>
 
-                <template v-else>
-                  {{
-                    Array.isArray(question.correctAnswer)
-                      ? question.correctAnswer.join(", ")
-                      : question.correctAnswer
-                  }}
-                </template>
-              </span>
-            </p>
+              <template v-else>
+                {{
+                  Array.isArray(question.correctAnswer)
+                    ? question.correctAnswer.join(", ")
+                    : question.correctAnswer
+                }}
+              </template>
+            </span>
+          </p>
         </div>
-        <!-- 三个按钮根据 IsDone 控制显示 -->
-    <div v-if="IsDone" class="button-group">
-      <el-button
-        v-if="!question.ISdone"
-        type="success"
-        @click="markAsMastered"
-        >已掌握</el-button>
-      
-      <el-button
-        v-if="!question.ISdone"
-        type="warning"
-        @click="markAsReviewed"
-        >已复习</el-button>
-      
-      <el-button
-        v-if="!question.ISdone"
-        type="danger"
-        @click="markAsNotReviewed"
-        >未复习</el-button>
-    </div>
+        <div v-if="IsDone" class="button-group">
+          <el-button
+            v-if="!question.ISdone"
+            type="success"
+            @click="markAsMastered"
+            >已掌握</el-button
+          >
+          <el-button
+            v-if="!question.ISdone"
+            type="warning"
+            @click="markAsReviewed"
+            >已复习</el-button
+          >
+          <el-button
+            v-if="!question.ISdone"
+            type="danger"
+            @click="markAsNotReviewed"
+            >未复习</el-button
+          >
+        </div>
       </el-card>
     </div>
-    
+
     <div v-if="SingleQuestionLoading" class="loading-father">
-        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
-      </div>
+      <img
+        src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg"
+        class="loading"
+      />
+    </div>
     <!-- 提交按钮 -->
     <el-button
       block
@@ -120,50 +121,66 @@ import { ElMessageBox } from "element-plus";
 import { useRouter, useRoute } from "vue-router";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
 import questionApi from "@/api/question";
-import {useItemStore} from '@/store/modules/CommentStore'
+import { useItemStore } from "@/store/modules/CommentStore";
 import { storeToRefs } from "pinia";
 import userWrongQuestionApi from "@/api/userWrongQuestion";
-const QuestionLoading=useItemStore();
-const {SingleQuestionLoading}=storeToRefs(QuestionLoading);
+// import js from "@eslint/js";
+const QuestionLoading = useItemStore();
+const { SingleQuestionLoading } = storeToRefs(QuestionLoading);
 const route = useRoute();
-const QuestionId = route.params.id;
+const QuestionId = route.params.questionId;
+const WrongId = route.params.wrongId;
 // State
-const question = ref(null); 
-const selectedAnswer = ref(null); 
-const IsDone = ref(false); 
-const isSubmitting = ref(false); 
-const isWritable = ref(true); 
+const question = ref(null);
+const selectedAnswer = ref(null);
+const IsDone = ref(false);
+const isSubmitting = ref(false);
+const isWritable = ref(true);
 
 // Router
 const router = useRouter();
 const onClickLeft = () => {
   router.push({ name: "study-progress" });
 };
-const markAsMastered=()=>{
-  try{
-    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"MASTERED"});
-  }catch(error){
-    console.log("error",error); 
+const markAsMastered = async () => {
+  try {
+    await userWrongQuestionApi.UpDate(
+      JSON.stringify({ wrongId: +WrongId, reviewStatus: "MASTERED" })
+    );
+  } catch (error) {
+    console.log("error", error);
   }
-}
-const markAsReviewed=()=>{
-  try{
-    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"REVIEWED"});
-  }catch(error){
-    console.log("error",error); 
+  router.push({ name: "wrong-list" });
+};
+const markAsReviewed = () => {
+  try {
+    userWrongQuestionApi.UpDate(
+      JSON.stringify({
+        wrongId: +WrongId,
+        reviewStatus: "REVIEWED",
+      })
+    );
+  } catch (error) {
+    console.log("error", error);
   }
-}
-const markAsNotReviewed=()=>{
-  try{
-    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"NOT_REVIEWED"});
-  }catch(error){
-    console.log("error",error); 
+  router.push({ name: "wrong-list" });
+};
+const markAsNotReviewed = () => {
+  try {
+    userWrongQuestionApi.UpDate(
+      JSON.stringify({
+        wrongId: +WrongId,
+        reviewStatus: "NOT_REVIEWED",
+      })
+    );
+  } catch (error) {
+    console.log("error", error);
   }
-}
+  router.push({ name: "wrong-list" });
+};
 const submitBtnText = computed(() => {
   return isSubmitting.value ? "正在提交" : "提交";
 });
-
 
 const fetchData = async () => {
   try {
@@ -171,16 +188,14 @@ const fetchData = async () => {
     const response = await questionApi.getSingleQuestion(QuestionId);
     const data = response.data || {};
 
-   
     if (data.options && typeof data.options === "string") {
       data.options = JSON.parse(data.options);
     }
     if (data.correctAnswer && typeof data.correctAnswer === "string") {
       data.correctAnswer = JSON.parse(data.correctAnswer);
     }
-    
-    
-    question.value = data; 
+
+    question.value = data;
     QuestionLoading.setSingleQuestionLoading(false);
   } catch (error) {
     console.error("获取题目失败:", error);
@@ -190,13 +205,11 @@ const fetchData = async () => {
 const onSubmit = async () => {
   if (!question.value) return;
 
-  
   const formData = {
     questionId: question.value.questionId,
     userAnswer: null,
   };
 
-  
   if (question.value.questionType === "SHORT_ANSWER") {
     formData.userAnswer = selectedAnswer.value || "null";
   } else if (
@@ -244,13 +257,13 @@ onMounted(() => {
 .button-group {
   margin-top: 20px;
 }
-.loading-father{
+.loading-father {
   width: 100%;
   height: 100px;
-  justify-content: center; 
+  justify-content: center;
   display: flex;
 }
-.loading{
+.loading {
   align-items: center; /* 垂直居中 */
 }
 .answer {

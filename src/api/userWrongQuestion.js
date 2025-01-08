@@ -9,7 +9,7 @@ const userWrongQuestionApi={
         return axios.get('/brt/userWrongQuestion/list/wronginfo');  
     },
     UpDate(params){
-        return axios.get('/brt/userWrongQuestion/update',params);  
+        return axios.post('/brt/userWrongQuestion/update',params);  
     }
 };
 

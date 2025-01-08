@@ -3,5 +3,5 @@
 </template>
 
 <script setup>
-import CardItem from '@/components/community/carditem.vue';
+import CardItem from "@/components/community/carditem.vue";
 </script>
