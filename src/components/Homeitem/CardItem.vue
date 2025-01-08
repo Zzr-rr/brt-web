@@ -1,14 +1,18 @@
 <template>
   <el-row :gutter="40" class="discount">
-    <el-col :span="6" v-for="(item, index) in CardItemData" :key="index">
-      <div class="item" :key="item.id" @click="goToDetail(item.id)">
+    <el-col :span="6" v-for="(item, index) in CardItemData.value" :key="index">
+      <div
+        class="item"
+        :key="item.interactionId"
+        @click="goToDetail(item.interactionId)"
+      >
         <div class="imgItem">
           <img :src="item.imgUrl" />
         </div>
         <div class="info">
-          <div class="title">{{ item.title }}</div>
-          <div class="desc">{{ item.desc }}</div>
-          <div class="bottom">{{ item.time }}</div>
+          <div class="title">我是题目</div>
+          <div class="desc">{{ item.content }}</div>
+          <div class="bottom">{{ item.createdAtFormatted }}</div>
         </div>
       </div>
     </el-col>
@@ -16,26 +20,38 @@
 </template>
 
 <script setup>
-import { ItemList as CardItemData } from "@/assets/data/Homeitem";
-import authApi from '@/api/auth';
-import { useRouter } from 'vue-router';
-import { onMounted,ref } from 'vue';
-//const CardItemData=ref([]);
+import { ItemList as CardItemData1 } from "@/assets/data/Homeitem";
+import CommunityApi from "@/api/communityInteraction";
+import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+const CardItemData = ref([]);
 const router = useRouter();
 const goToDetail = (id) => {
-  router.push({ name: 'ItemDetail', params: { id } });
-}
+  router.push({ name: "ItemDetail", params: { id } });
+};
 
-// onMounted(async () => {
-//   try {
-//     const response = await authApi.getDiscussion();
-//     if (response && response.data) {
-//       CardItemData.value = response.data; // 将API返回的数据赋值给cardItemData
-//     }
-//   } catch (error) {
-//     console.error("获取帖子内容失败：", error);
-//   }
-// });
+onMounted(async () => {
+  try {
+    const response = await CommunityApi.getIteminfo();
+    if (response && response.data) {
+      CardItemData.value = response.data;
+
+      response.data.forEach((post) => {
+        const createdAt = post.createdAt;
+
+        if (createdAt) {
+          const date = new Date(createdAt);
+          const month = date.getMonth() + 1;
+          const day = date.getDate();
+          const formattedDate = `${month}.${day}`;
+          post.createdAtFormatted = formattedDate;
+        }
+      });
+    }
+  } catch (error) {
+    console.error("获取帖子内容失败：", error);
+  }
+});
 </script>
 
 <style lang="less" scoped>
