@@ -2,16 +2,16 @@
   <div class="screen-container">
     <!-- 背景轮播图 -->
     <div class="background">
-      <el-carousel :interval="5000" arrow="always" height="100vh"> <!-- 恢复为100vh -->
+      <el-carousel :interval="5000" arrow="always" height="100vh">
         <el-carousel-item v-for="(item, index) in carouselItems" :key="index">
-          <div class="carousel-content" :style="{ backgroundImage: 'url(' + item.imgUrl + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }"></div>
+          <div class="carousel-content" :style="{ backgroundImage: 'url(' + item.imgUrl + ')', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat', opacity: '0.5' }"></div> <!-- 设置更低的透明度 -->
         </el-carousel-item>
       </el-carousel>
 
       <!-- 页面内容 -->
       <h1 class="title">速通软件 - 让学习变得更高效</h1>
       <div class="overlay">
-        <el-button class="custom-button" type="primary" @click="goToMyQuestionBank">开始学习</el-button>
+        <el-button class="custom-button" type="primary" @click="goToMyQuestionBank">  开始学习</el-button>
       </div>
       <div class="content">
         <p class="description">
@@ -66,25 +66,11 @@ const carouselItems = ref([
   position: relative;
 }
 
-.carousel-content::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(240, 240, 240, 0.8), rgba(240, 240, 240, 0.4)), linear-gradient(to right, rgba(240, 240, 240, 0.8), rgba(240, 240, 240, 0.4));
-  z-index: 1;
-}
-
 /* Title styling */
 .title {
   font-size: 48px; /* 增加字体大小 */
-  color: black; /* 设置黑色字体 */
-  text-shadow: 
-    1px 1px 0 rgba(255, 255, 255, 0.7),
-    2px 2px 0 rgba(255, 255, 255, 0.5), 
-    3px 3px 5px rgba(255, 255, 255, 0.3); /* 添加较多层次的白色阴影效果 */
+  color: #333; /*加深字体颜色*/
+ /* 添加较多层次的白色阴影效果 */
   position: absolute;
   top: 20px; /* 放在顶部，留出一些边距 */
   left: 50%;
@@ -100,7 +86,7 @@ const carouselItems = ref([
 .content {
   text-align: left; /* 文本左对齐 */
   max-width: 300px; /* 限制最大宽度 */
-  color: black; /* 设置文本颜色 */
+  color: #0a0707; /* 加深文本颜色 */
   padding: 20px; /* 内边距 */
   position: absolute;
   bottom: 200px; /* 放在离底部一定距离的位置 */
@@ -109,14 +95,13 @@ const carouselItems = ref([
 }
 
 /* Description styling */
+
+/* Description styling */
 .description {
-  font-size: 20px; /* 增加字体大小 */
-  text-shadow: 
-    1px 1px 0 rgba(0, 0, 0, 0.7), 
-    2px 2px 0 rgba(0, 0, 0, 0.5), 
-    3px 3px 5px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-  line-height: 1.5; /* 增加行间距 */
-  font-family: 'Comic Sans MS', cursive, sans-serif; /* 使用艺术字的可能字体 */
+   font-size: 20px; /* 增加字体大小 */
+
+   line-height: 1.5; /* 增加行间距 */
+   font-family: 'Comic Sans MS', cursive, sans-serif; /* 使用艺术字的可能字体 */
 }
 
 /* Overlay for Button */
@@ -129,9 +114,25 @@ const carouselItems = ref([
 }
 
 .custom-button {
-  padding: 10px 20px;
+  padding: 10px 30px;
   font-size: 18px;
   color: white;
-  background-color: black;
+  background-color: #4CAF50; /* 改为一个绿色的学习相关的颜色 */
+  border-radius: 5px; /* 设置圆角 */
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-button::before {
+  content: '📚'; /* 添加书本 Emoji */
+  position: absolute;
+  left: 5px; 
+  top: 50%; 
+  transform: translateY(-50%); 
+  font-size: 20px; /* 更大一点的字体 */
+}
+
+.custom-button:hover {
+  background-color: #45a049; /* 添加悬停样式 */
 }
 </style>
