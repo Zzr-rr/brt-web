@@ -17,9 +17,9 @@
                 <span>题库</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="/questionbank/square">
+                <!-- <el-menu-item index="/questionbank/square">
                     题库广场
-                </el-menu-item>
+                </el-menu-item> -->
                 <el-menu-item index="/questionbank/mybank">
                     我的题库
                 </el-menu-item>

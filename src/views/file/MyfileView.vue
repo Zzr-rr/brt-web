@@ -3,9 +3,9 @@
   <!-- 控制按钮 -->
   <el-header class="file-controls">
   <el-button type="primary" icon="Upload" @click="uploadFile">上传</el-button>
-  <el-button type="success" icon="Link">链接</el-button>
-  <el-button type="success" icon="Share" @click="shareFile">分享</el-button>
-  <el-button type="success" icon="Generate" @click="generateQuestionBank" :loading="loading">生成题库</el-button>
+  <!-- <el-button type="success" icon="Link">链接</el-button> -->
+  <!-- <el-button type="success" icon="Share" @click="shareFile">分享</el-button> -->
+  <el-button type="success" icon="Generate" @click="generateQuestionBank">生成题库</el-button>
   </el-header>
   
   <!-- 文件列表 -->
