@@ -5,10 +5,10 @@ const CommunityApi = {
     return axios.post("/brt/communityInteraction/post", params);
   },
   LikeAdder(params) {
-    return axios.post("/brt/communityInteraction/like", params); // 假设这是获取文件列表的接口
+    return axios.post("/api/brt/communityInteraction/like", params); // 假设这是获取文件列表的接口
   },
   CommentAdder(params) {
-    return axios.post("/brt/communityInteraction/comment", params);
+    return axios.post("/api/brt/communityInteraction/comment", params);
   },
   getLike(params) {
     return axios.get(`/api/brt/communityInteraction/list/like?targetId=${params}`);

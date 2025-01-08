@@ -25,7 +25,7 @@
     <el-divider></el-divider>
 
     <h2 class="commentHead">评论</h2>
-    <CommentItem :comments=itemId />
+    <CommentItem :itemId=itemId />
 
     <el-divider></el-divider>
     <div class="add-comment">
@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted,  ref } from "vue";
 import { useRoute } from "vue-router";
 import CommentItem from "@/components/CommentItem.vue";
 import LabelBar from "@/components/LabelBar.vue";
@@ -60,15 +60,13 @@ const content = route.params.content;
 const labelList=["明天","你好"];
 // 定义响应式变量
 const Isdone = ref(false); // 用于判断数据是否加载完成
-const likeItem = reactive([]); // 点赞信息
 const newComment = ref(""); // 用户输入的新评论
 
 // 获取数据的函数
 const fetchData = async () => {
   try {
     // 获取点赞数据（如果有）
-    const response2 = await CommunityApi.getLike(itemId);
-    likeItem.value = response2.data.data;
+
 
     // 设置数据加载完成标志
     Isdone.value = true;
@@ -86,12 +84,22 @@ const CommentAdder = async () => {
   }
 
   try {
-    const response = await CommunityApi.CommentAdder(
-      JSON.stringify({
+    console.log("传入评论",{
         targetId: +itemId,
         content: newComment.value,
-      })
-    );
+      });
+    
+    const response = await CommunityApi.CommentAdder(
+  {
+    targetId: +itemId,
+    content: newComment.value,
+  }, 
+  {
+    headers: {
+      'Content-Type': 'application/json',  // 确保请求头设置为 'application/json'
+    }
+  }
+);
 
     // 更新评论列表
     if (response.data.success) {

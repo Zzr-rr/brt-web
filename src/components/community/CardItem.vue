@@ -4,31 +4,56 @@
       <div
         class="item"
         :key="item.interactionId"
-        @click="goToDetail(item.interactionId,item.content)"
+        @click="goToDetail(item.interactionId, item.content)"
       >
-        <div class="imgItem"> 
+        <div class="imgItem">
           <img :src="item.imgUrl" />
         </div>
-        <div class="info" >
+        <div class="info">
           <div class="title">我是题目</div>
           <div class="desc">{{ item.content }}</div>
+          <div class="like-area">
+            <el-icon
+              color="#409efc"
+              :class="{'active': item.isLiked}"
+              @click.stop="Starone(item)"
+            >
+              <Star />
+            </el-icon>
+            <span>{{ item.likesCount }}</span>
+          </div>
           <div class="bottom">{{ item.createdAtFormatted }}</div>
         </div>
-    </div> 
+      </div>
     </el-col>
   </el-row>
 </template>
-
 <script setup>
-import { useRouter } from 'vue-router';
-// import { ItemList as CardItemData1 } from "@/assets/data/Homeitem";
+import { useRouter } from "vue-router";
+import {  reactive, onMounted } from "vue";
 import CommunityApi from "@/api/communityInteraction";
-import { onMounted, reactive } from "vue";
-const CardItemData = reactive([]);
+import { ElIcon } from 'element-plus';
+
+const CardItemData = reactive([]);  // 用于存储卡片数据
 const router = useRouter();
-const goToDetail = (id,content) => {
-  router.push({ name: "TestView", params: { id,content, } });
-  // router.push({ name: "wrong-list" });
+
+const goToDetail = (id, content) => {
+  router.push({ name: "TestView", params: { id, content } });
+};
+
+// 点赞功能处理
+const Starone = async (item) => {
+  
+  item.isLiked = true; 
+    item.likesCount += 1;
+
+  // 发送点赞请求
+  try {
+    await CommunityApi.LikeAdder({ targetId: item.interactionId });
+    console.log("点赞操作完成");
+  } catch (error) {
+    console.error("点赞失败", error);
+  }
 };
 
 onMounted(async () => {
@@ -44,6 +69,7 @@ onMounted(async () => {
           const formattedDate = `${month}.${day}`;
           post.createdAtFormatted = formattedDate;
         }
+        post.isLiked = false; // 默认状态为未点赞
       });
       CardItemData.value = response.data.data;
     }
@@ -57,11 +83,10 @@ onMounted(async () => {
 .discount {
   border-radius: 10px;
 }
-.item:hover{
+.item:hover {
   cursor: pointer;
-};
+}
 .item {
-  
   margin-bottom: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -113,6 +138,22 @@ onMounted(async () => {
     position: absolute;
     right: 5px;
     bottom: 0;
+  }
+  .like-area {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .like-area .el-icon {
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+
+  /* 当点赞星星被点击时，增加 active 样式 */
+  .like-area .el-icon.active {
+    color: #ffd700;  /* 星星填充颜色 */
   }
 }
 </style>
