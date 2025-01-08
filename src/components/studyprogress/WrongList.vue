@@ -71,6 +71,59 @@ import { computed, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import "element-plus/dist/index.css";
 import { ElIcon } from "element-plus";
+import { useItemStore } from "@/store/modules/CommentStore";
+import { storeToRefs } from "pinia";
+import userWrongQuestionApi from "@/api/userWrongQuestion";
+const WronglistLoading = useItemStore();
+const { learingWronglistLoading } = storeToRefs(WronglistLoading);
+const router = useRouter();
+const errorQuestions = reactive([]);
+
+const Pushreview = (id) => {
+  router.push({ name: "review", params: { id } }).catch((error) => {
+    console.log("error", error);
+  });
+};
+
+const fetchData = async () => {
+  try {
+    // 更新 loading 状态
+    WronglistLoading.setlearingWronglistLoading(true);
+    const response = await userWrongQuestionApi.getWrongInfo();
+    const WrongInfos = response.data;
+    for(let info of WrongInfos){
+      errorQuestions.push({
+        completed: (info.reviewStatus == "REVIEWED"?1:(info.reviewStatus == "NOT_REVIEWED"?0:2)),
+        reviewStatus: info.reviewStatus,
+        name: info.questionText,
+        difficulty: info.difficulty,
+        QuestionID: info.questionId,
+        difficultyClass: (info.difficulty === "EASY" ? "diff-green" : (info.difficulty === "MEDIUM" ? "diff-orange" : "diff-red")),
+      })
+    }
+
+    // 请求完成后关闭 loading
+    WronglistLoading.setlearingWronglistLoading(false);
+  }catch (error) {
+    console.error("Error fetching data:", error);
+    WronglistLoading.setlearingWronglistLoading(false);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
+
+const sortedErrorQuestions = computed(() => {
+  return errorQuestions;
+});
+</script>
+
+<!-- <script setup>
+import { computed, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import "element-plus/dist/index.css";
+import { ElIcon } from "element-plus";
 import questionApi from "@/api/question";
 import userWrongQuestionApi from "@/api/userWrongQuestion";
 import { useItemStore } from "@/store/modules/CommentStore";
@@ -151,7 +204,7 @@ const formattedErrorQuestions = computed(() => {
 const sortedErrorQuestions = computed(() => {
   return [...formattedErrorQuestions.value]
 });
-</script>
+</script> -->
 
 
 <style scoped>
