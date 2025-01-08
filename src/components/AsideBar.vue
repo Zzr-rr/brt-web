@@ -39,7 +39,7 @@
             <el-icon><icon-menu /></el-icon>
             <span>学习进度管理</span>
         </el-menu-item>
-        <el-menu-item index="/settings">
+        <el-menu-item index="/users/personalpage">
             <el-icon>
                 <setting />
             </el-icon>

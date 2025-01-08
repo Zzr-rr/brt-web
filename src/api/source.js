@@ -1,8 +1,5 @@
 import axios from "@/api/axois"; // 确保路径正确，并且axios拼写正确
 
-
-
-
 const sourceApi = {
   // 上传文件的接口
   uploadContent(params) {
