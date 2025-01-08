@@ -4,6 +4,16 @@ const routes = [
     redirect: "/home",
   },
   {
+    path: "/CardItem",
+    name: "home",
+    children: [
+      {
+        path: "mybank",
+        name: "mybank",
+        component: () => import("@/views/questionbank/MybankView.vue"),
+      }],
+  },
+  {
     path: "/home",
     name: "home",
     component: () => import("@/views/HomeView.vue"),
