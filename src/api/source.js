@@ -19,6 +19,11 @@ const sourceApi = {
   },
   download(){
     return axios.post('/')
+  },
+  downloadImage() {
+    return axios.get('/brt/source/download/image', {
+      responseType: 'blob' // 确保响应类型为blob，以便处理二进制数据（如图片）
+    });
   }
 };
 
