@@ -15,7 +15,7 @@ const CommunityApi = {
   },
   getComment(params) {
     return axios.get(
-      `/brt/communityInteraction/list/comment?targetId=${params}`
+      `/api/brt/communityInteraction/list/comment?targetId=${params}`
     );
   },
   getIteminfo() {

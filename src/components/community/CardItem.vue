@@ -6,15 +6,15 @@
         :key="item.interactionId"
         @click="goToDetail(item.interactionId,item.content)"
       >
-        <div class="imgItem">
+        <!-- <div class="imgItem"> -->
           <!-- <img :src="item.imgUrl" /> -->
         </div>
-        <div class="info">
+        <div class="info" >
           <div class="title">我是题目</div>
           <div class="desc">{{ item.content }}</div>
           <div class="bottom">{{ item.createdAtFormatted }}</div>
         </div>
-      </div>
+      <!-- </div> -->
     </el-col>
   </el-row>
 </template>
@@ -27,9 +27,8 @@ import { onMounted, reactive } from "vue";
 const CardItemData = reactive([]);
 const router = useRouter();
 const goToDetail = (id,content) => {
-  router.push({ name: "ItemDetail", params: { id,content } }).catch((error) => {
-    console.log("error", error);
-  });
+  router.push({ name: "TestView", params: { id,content } });
+  // router.push({ name: "wrong-list" });
 };
 
 onMounted(async () => {

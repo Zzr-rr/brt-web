@@ -1,5 +1,6 @@
 <template>
-    <div v-if="StoreLoad.item">
+    1
+    <!-- <div v-if="StoreLoad.item">
         <el-card class="box-card">
             <div class="clearfix">
                 <span class="head">{{ StoreLoad.item.title }}</span>
@@ -35,7 +36,7 @@
     
     <div v-else>
         <p>Loading...</p>
-    </div>
+    </div> -->
 </template>
 
 <script setup>
@@ -50,7 +51,6 @@ const commentItem=reactive([]);
 const likeItem=reactive([]);
 const itemId = route.params.id;
 const content=route.params.content;
-const StoreLoad = useItemStore();
 const fetchData=async()=>{
     const response=await CommunityApi.getComment(itemId);
         content.value=response.data;
@@ -61,7 +61,7 @@ const fetchData=async()=>{
 }
 onMounted(() => {
    
-    StoreLoad.loadData(itemId);
+    fetchData();
 });
 </script>
 

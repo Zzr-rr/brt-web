@@ -29,16 +29,22 @@ const routes = [
     component: () => import("@/views/SettingsView.vue"),
   },
   {
+    path: "/Community/:id/:content",
+    name: "TestView",
+    component:()=>import("@/views/TestView.vue")
+  },
+  {
     path: "/Community",
     name: "Community",
+   
+    // children:[
+    //   {
+    //     path: "tiezi/:id/:content",
+    //     name: "TestView",
+    //     component:()=>import("@/views/TestView.vue")
+    //   }
+    // ],
     component: () => import("@/views/CommunityPlace.vue"),
-    children:[
-      {
-        path: "tiezi/:id/:content",
-        name: "ItemDetail",
-        component: () => import("@/views/TestView.vue"),
-      },
-    ]
   },
   {
     path: "/study-progress",

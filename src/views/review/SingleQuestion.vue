@@ -140,7 +140,7 @@ const isWritable = ref(true);
 // Router
 const router = useRouter();
 const onClickLeft = () => {
-  router.push({ name: "study-progress" });
+  router.push({ name: "wrong-list" });
 };
 const markAsMastered = async () => {
   try {
