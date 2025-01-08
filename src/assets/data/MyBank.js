@@ -4,8 +4,6 @@ import Image2 from "@/assets/images/Image2.png";
 import Image3 from "@/assets/images/Image3.png";
 import Image4 from "@/assets/images/Image4.png";
 
-import Image5 from "@/assets/images/Image5.png";
-import Image6 from "@/assets/images/Image6.png";
 import Image7 from "@/assets/images/Image7.png";
 import Image8 from "@/assets/images/Image8.png";
 
@@ -54,7 +52,7 @@ export const ItemList = [
     title: "5",
     desc: "...",
     time: "8.16",
-    imgUrl: Image5,
+    imgUrl: Image3,
     content:
       "有没有大佬告诉我圆神怎么玩呀，我每次丘丘人都被的卢克吊打，有没有相关的方法捏",
     id: 5,
@@ -63,7 +61,7 @@ export const ItemList = [
     title: "6",
     desc: "...",
     time: "8.16",
-    imgUrl: Image6,
+    imgUrl: Image3,
   },
   {
     title: "7",
