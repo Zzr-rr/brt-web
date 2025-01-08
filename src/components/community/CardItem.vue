@@ -6,15 +6,15 @@
         :key="item.interactionId"
         @click="goToDetail(item.interactionId,item.content)"
       >
-        <!-- <div class="imgItem"> -->
-          <!-- <img :src="item.imgUrl" /> -->
+        <div class="imgItem"> 
+          <img :src="item.imgUrl" />
         </div>
         <div class="info" >
           <div class="title">我是题目</div>
           <div class="desc">{{ item.content }}</div>
           <div class="bottom">{{ item.createdAtFormatted }}</div>
         </div>
-      <!-- </div> -->
+    </div> 
     </el-col>
   </el-row>
 </template>

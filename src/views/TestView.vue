@@ -6,9 +6,9 @@
       </div>
 
       <el-row class="info-row" justify="start" align="middle">
-        <el-col :span="1">
+        <!-- <el-col :span="1">
           <el-avatar :src="StoreLoad.item.avatarUrl" />
-        </el-col>
+        </el-col> -->
         <el-col :span="22">
           <div class="writer">发帖人</div>
           <!-- <div class="time">
@@ -60,17 +60,12 @@ const content = route.params.content;
 const labelList=["明天","你好"];
 // 定义响应式变量
 const Isdone = ref(false); // 用于判断数据是否加载完成
-const commentItem = reactive([]); // 评论列表
 const likeItem = reactive([]); // 点赞信息
 const newComment = ref(""); // 用户输入的新评论
 
 // 获取数据的函数
 const fetchData = async () => {
   try {
-    // 获取评论数据
-    const response = await CommunityApi.getComment(itemId);
-    commentItem.value = response.data.data;
-
     // 获取点赞数据（如果有）
     const response2 = await CommunityApi.getLike(itemId);
     likeItem.value = response2.data.data;
