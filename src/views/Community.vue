@@ -1,7 +1,7 @@
 <template>
-    <Comment/>
+    <CardItem/>
 </template>
 
-<script>
-import Comment from "@/components/Comment.vue"
+<script setup>
+import CardItem from '@/components/community/carditem.vue';
 </script>

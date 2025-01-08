@@ -19,7 +19,7 @@ const CommunityApi = {
     );
   },
   getIteminfo() {
-    return axios.get(`/brt/communityInteraction/list/postinfo`);
+    return axios.get("/api/brt/communityInteraction/list/postinfo");
   },
 };
 

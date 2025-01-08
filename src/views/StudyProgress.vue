@@ -17,7 +17,7 @@ import { ref, onMounted } from "vue";
 import Chart from "@/components/studyprogress/ChartPic.vue";
 import Bar from "@/components/studyprogress/BarPic.vue";
 import StudyList from "@/components/studyprogress/StudyList.vue";
-import WrongList from "@/components/studyprogress/WrongList.vue";
+// import WrongList from "@/components/studyprogress/WrongList.vue";
 import userQuestionProgressApi from "@/api/userQuestionProgress";
 const totalCorrect = ref(0);
 const totalValue = ref(0);

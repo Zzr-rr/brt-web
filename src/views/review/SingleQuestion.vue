@@ -74,16 +74,36 @@
               </span>
             </p>
         </div>
+        <!-- 三个按钮根据 IsDone 控制显示 -->
+    <div v-if="IsDone" class="button-group">
+      <el-button
+        v-if="!question.ISdone"
+        type="success"
+        @click="markAsMastered"
+        >已掌握</el-button>
+      
+      <el-button
+        v-if="!question.ISdone"
+        type="warning"
+        @click="markAsReviewed"
+        >已复习</el-button>
+      
+      <el-button
+        v-if="!question.ISdone"
+        type="danger"
+        @click="markAsNotReviewed"
+        >未复习</el-button>
+    </div>
       </el-card>
     </div>
-    <!-- 无题目显示空状态 -->
-    <!-- <el-empty v-else description="没有题目" /> -->
+    
     <div v-if="SingleQuestionLoading" class="loading-father">
         <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
       </div>
     <!-- 提交按钮 -->
     <el-button
       block
+      v-if="!IsDone"
       type="primary"
       :loading="isSubmitting"
       :disabled="isSubmitting"
@@ -102,6 +122,7 @@ import userQuestionProgressApi from "@/api/userQuestionProgress";
 import questionApi from "@/api/question";
 import {useItemStore} from '@/store/modules/CommentStore'
 import { storeToRefs } from "pinia";
+import userWrongQuestionApi from "@/api/userWrongQuestion";
 const QuestionLoading=useItemStore();
 const {SingleQuestionLoading}=storeToRefs(QuestionLoading);
 const route = useRoute();
@@ -118,7 +139,27 @@ const router = useRouter();
 const onClickLeft = () => {
   router.push({ name: "study-progress" });
 };
-
+const markAsMastered=()=>{
+  try{
+    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"MASTERED"});
+  }catch(error){
+    console.log("error",error); 
+  }
+}
+const markAsReviewed=()=>{
+  try{
+    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"REVIEWED"});
+  }catch(error){
+    console.log("error",error); 
+  }
+}
+const markAsNotReviewed=()=>{
+  try{
+    userWrongQuestionApi.UpDate({wrongId:QuestionId,reviewStatus:"NOT_REVIEWED"});
+  }catch(error){
+    console.log("error",error); 
+  }
+}
 const submitBtnText = computed(() => {
   return isSubmitting.value ? "正在提交" : "提交";
 });
@@ -200,6 +241,9 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.button-group {
+  margin-top: 20px;
+}
 .loading-father{
   width: 100%;
   height: 100px;

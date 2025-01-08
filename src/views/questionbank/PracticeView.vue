@@ -5,7 +5,7 @@
       @scroll-to-question="scrollToQuestion"
       :results="results"
       :selectedAnswers="selectedAnswers"
-    /><!--未传入-->
+    />
   </div>
   <div>
     <el-header>

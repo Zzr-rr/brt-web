@@ -8,7 +8,7 @@
       :size="getRandomNumber(50,80)"
       :speed="getRandomNumber(2, 5)"
       :movex="getRandomNumber(100,innerWidth - 300)"
-      :movey="getRandomNumber(-200, -400)"
+      :movey="getRandomNumber(innerHeight, innerHeight+100)"
       :delay="getRandomNumber(0, 10)"
     />
     <AboutAnimation
@@ -29,9 +29,9 @@
 import { ref, onMounted } from "vue";
 import AboutAnimation from "@/components/Aboutitem/AboutAnimation.vue";
 import AllAboutUs from "@/components/Aboutitem/AllAboutUs.vue";
-import { allowMultipleToast } from "vant";
 const Us=["苟鹏扬","朱子锐","许战","童志斌","李淳政"];
 const innerWidth=window.innerWidth;
+const innerHeight=window.innerHeight;
 // 创建随机数生成函数
 function getRandomNumber(min, max) {
   return Math.random() * (max - min) + min;
