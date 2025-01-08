@@ -19,6 +19,11 @@ const routes = [
     component: () => import("@/views/SettingsView.vue"),
   },
   {
+    path: "/Community",
+    name: "Community",
+    component: () => import("@/views/Community.vue"),
+  },
+  {
     path: "/study-progress",
     name: "study-progress",
     children:[

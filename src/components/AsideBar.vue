@@ -7,6 +7,10 @@
             </el-icon>
             <span>首页</span>
         </el-menu-item>
+        <el-menu-item index="/Community">
+            <el-icon><ChatLineSquare /></el-icon>
+            <span>社区</span>
+        </el-menu-item>
         <el-sub-menu index="/questionbank">
             <template #title>
                 <el-icon><icon-menu /></el-icon>
