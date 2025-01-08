@@ -7,7 +7,7 @@
         @click="goToDetail(item.interactionId, item.content)"
       >
         <div class="imgItem">
-          <img :src="item.imgUrl" />
+          <img :src="cardImage" />
         </div>
         <div class="info">
           <div class="title">我是题目</div>
@@ -33,7 +33,8 @@ import { useRouter } from "vue-router";
 import {  reactive, onMounted } from "vue";
 import CommunityApi from "@/api/communityInteraction";
 import { ElIcon } from 'element-plus';
-
+// import vue from "eslint-plugin-vue";
+import cardImage from '@/assets/images/card1.png';  // 指定完整的文件名和扩展名
 const CardItemData = reactive([]);  // 用于存储卡片数据
 const router = useRouter();
 
@@ -57,6 +58,7 @@ const Starone = async (item) => {
 };
 
 onMounted(async () => {
+  
   try {
     const response = await CommunityApi.getIteminfo();
     if (response && response.data) {
