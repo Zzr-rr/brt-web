@@ -19,6 +19,11 @@ const routes = [
     component: () => import("@/views/SettingsView.vue"),
   },
   {
+    path: "/Community",
+    name: "Community",
+    component: () => import("@/views/Community.vue"),
+  },
+  {
     path: "/study-progress",
     name: "study-progress",
     children:[
@@ -29,6 +34,18 @@ const routes = [
       }
     ],
     component: () => import("@/views/StudyProgress.vue"),
+  },
+  {
+    path: "/wrong-list",
+    name: "wrong-list",
+    children:[
+      {
+        path: "review/:id",
+        name: "review",
+        component: () => import("@/views/review/SingleQuestion.vue"),
+      }
+    ],
+    component: () => import("@/views/WrongList.vue"),
   },
   {
     path: "/home/:id",

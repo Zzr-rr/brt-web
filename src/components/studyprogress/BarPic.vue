@@ -78,10 +78,10 @@ const updateChart = () => {
         left: 'center',
         textStyle: {
           fontSize: 16,
-          color: 'white'
+          color: 'black'
         }
       },
-      backgroundColor: 'rgb(40, 46, 72)', // 背景色
+      // backgroundColor: 'rgb(40, 46, 72)', // 背景色
       tooltip: {
         trigger: 'axis',
         axisPointer: {
@@ -98,22 +98,22 @@ const updateChart = () => {
         type: 'category',
         data: tags, // 使用标签名作为 X 轴
         axisLabel: {
-          color: 'white'
+          color: 'black'
         },
         axisLine: {
           lineStyle: {
-            color: 'white'
+            color: 'black'
           }
         }
       },
       yAxis: {
         type: 'value',
         axisLabel: {
-          color: 'white'
+          color: 'black'
         },
         axisLine: {
           lineStyle: {
-            color: 'white'
+            color: 'black'
           }
         }
       },
@@ -150,8 +150,8 @@ onMounted(() => {
   border-radius: 2%;
   color: white;
   font-size: 24px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  background-color:  rgb(40,46,72);
+  
+  
 }
 
 #chartContainer{

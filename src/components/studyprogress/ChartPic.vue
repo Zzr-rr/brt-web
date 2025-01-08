@@ -28,7 +28,7 @@ let myChart = null;
 const updateChart = () => {
   if (myChart) {
     const option = {
-      backgroundColor: "rgb(40,46,72)",
+      // backgroundColor: "rgb(255,255,255)",
       title: {
         text: "刷题进度",
         top: "50%",
@@ -36,18 +36,18 @@ const updateChart = () => {
         padding: [-20, 0, 0, -45],
         textStyle: {
           fontSize: 19,
-          color: "white",
+          color: "black",
         },
         subtext: `{totalSty|${(
           (props.totalCorrect / props.totalValue) *
           100
         ).toFixed(2)}%}`,
         subtextStyle: {
-          color: "white",
+          color: "black",
           rich: {
             totalSty: {
               fontSize: 19,
-              color: "white",
+              color: "black",
               align: "center",
             },
           },
@@ -74,7 +74,7 @@ const updateChart = () => {
           rich: {
             nameSty: {
               fontSize: 12,
-              color: "white",
+              color: "black",
               padding: [10, 14],
             },
           },
@@ -130,9 +130,9 @@ watch(
   position: sticky;
   width: 600px; height: 350px;
   border-radius: 2%;
-  background-color:  rgb(40,46,72);
+  
   color: white;
   font-size: 24px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  
 }
 </style>

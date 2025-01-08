@@ -1,5 +1,5 @@
 <template>
-    <div>@Copyright 中国矿业大学李淳政</div>
+    <div>@2021 BRT Team All Rights Reserved.</div>
 </template>
 
 <script lang="ts" setup>

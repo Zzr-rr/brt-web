@@ -1,10 +1,10 @@
-import MonkeyGodImg from "@/assets/images/MonkeyGod.png";
+import MonkeyGodImg from "@/assets/images/card1.png";
 export const ItemList = [
   {
     title: "善意速通",
     desc: "关于计算机网络....",
     time: "8.27",
-    imgUrl: "www",
+    imgUrl: MonkeyGodImg,
     id: 1,
     writer: "是压片",
     commentsList: [],

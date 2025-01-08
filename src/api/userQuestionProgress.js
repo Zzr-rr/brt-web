@@ -10,6 +10,9 @@ const userQuestionProgressApi={
     },
     getQuestionProgressbankList(params){
         return axios.post('/brt/userQuestionProgress/bank/list',params);
+    },
+    getBankinfoList(){
+        return axios.get('/brt/userQuestionProgress/bankinfo/list');
     }
 };
 export default userQuestionProgressApi;

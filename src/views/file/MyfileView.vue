@@ -140,6 +140,7 @@
   import fileApi from '@/api/file'; // 确保路径正确
   import sourceApi from '@/api/source';
   import questionBankApi from '@/api/questionBank';
+  import  {formatDateTime}  from '@/utils';
   
   const router = useRouter();
   const files = ref([]);
@@ -426,7 +427,7 @@
   return {
   id: file.fileId,
   name: file.fileName,
-  modified: file.updatedAt, // 或者选择 updatedAt
+  modified: formatDateTime(file.updatedAt), // 或者选择 updatedAt
   tag: JSON.parse(file.keywords), // 将 JSON 字符串转换为数组
   fileUrl: file.fileUrl // 添加文件下载 URL
   };
