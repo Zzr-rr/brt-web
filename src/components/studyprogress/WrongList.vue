@@ -1,7 +1,6 @@
 <template>
   <el-card class="custom-card" shadow="hover">
     <el-container class="error-list-container">
-     
       <el-main>
         <el-table
           :data="sortedErrorQuestions"
@@ -9,11 +8,7 @@
           class="error-table"
           stripe
         >
-        
-          <el-table-column 
-          label="状态"
-
-          class="status-column">
+          <el-table-column label="状态" class="status-column">
             <template #default="{ row }">
               <div
                 :class="{
@@ -28,28 +23,16 @@
           </el-table-column>
 
           <!-- 题目名列 -->
-          <el-table-column
-            prop="name"
-            label="题目名"
-            
-            class="name-column"
-          >
-            <template #default="{ row }" >
-              <div class="name-cell" @click="Pushreview(row.questionId,row.wrongId)">
+          <el-table-column prop="name" label="题目名" class="name-column">
+            <template #default="{ row }">
+              <div
+                class="name-cell"
+                @click="Pushreview(row.questionId, row.wrongId)"
+              >
                 {{ row.name }}
               </div>
             </template>
           </el-table-column>
-
-          <!-- 所属题库列 -->
-          <!-- <el-table-column label="复习状态" width="250">
-            <template #default="{ row }">
-              <div :class="row.">
-                {{ row.tag }}
-              </div>
-            </template>
-          </el-table-column> -->
-
           <el-table-column prop="difficulty" label="难度" width="120">
             <template #default="{ row }">
               <div :class="row.difficultyClass">
@@ -61,8 +44,11 @@
       </el-main>
     </el-container>
     <div v-if="learingWronglistLoading" class="loading-father">
-        <img src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg" class="loading">
-      </div>
+      <img
+        src="/src/assets/images/svg-spinners--12-dots-scale-rotate.svg"
+        class="loading"
+      />
+    </div>
   </el-card>
 </template>
 
@@ -80,9 +66,11 @@ const router = useRouter();
 const errorQuestions = reactive([]);
 
 const Pushreview = (questionId, wrongId) => {
-  router.push({ name: "review", params: { questionId, wrongId } }).catch((error) => {
-    console.log("error", error);
-  });
+  router
+    .push({ name: "review", params: { questionId, wrongId } })
+    .catch((error) => {
+      console.log("error", error);
+    });
 };
 
 const fetchData = async () => {
@@ -91,21 +79,31 @@ const fetchData = async () => {
     WronglistLoading.setlearingWronglistLoading(true);
     const response = await userWrongQuestionApi.getWrongInfo();
     const WrongInfos = response.data;
-    for(let info of WrongInfos){
+    for (let info of WrongInfos) {
       errorQuestions.push({
-        completed: (info.reviewStatus == "REVIEWED"?1:(info.reviewStatus == "NOT_REVIEWED"?0:2)),
+        completed:
+          info.reviewStatus == "REVIEWED"
+            ? 1
+            : info.reviewStatus == "NOT_REVIEWED"
+            ? 0
+            : 2,
         reviewStatus: info.reviewStatus,
         name: info.questionText,
         difficulty: info.difficulty,
         questionId: info.questionId,
-        wrongId:info.wrongId,
-        difficultyClass: (info.difficulty === "EASY" ? "diff-green" : (info.difficulty === "MEDIUM" ? "diff-orange" : "diff-red")),
-      })
+        wrongId: info.wrongId,
+        difficultyClass:
+          info.difficulty === "EASY"
+            ? "diff-green"
+            : info.difficulty === "MEDIUM"
+            ? "diff-orange"
+            : "diff-red",
+      });
     }
 
     // 请求完成后关闭 loading
     WronglistLoading.setlearingWronglistLoading(false);
-  }catch (error) {
+  } catch (error) {
     console.error("Error fetching data:", error);
     WronglistLoading.setlearingWronglistLoading(false);
   }
@@ -207,19 +205,18 @@ const sortedErrorQuestions = computed(() => {
 });
 </script> -->
 
-
 <style scoped>
 .status-column {
   width: 100px;
 }
 
-.loading-father{
+.loading-father {
   width: 100%;
   height: 100px;
-  justify-content: center; 
+  justify-content: center;
   display: flex;
 }
-.loading{
+.loading {
   align-items: center; /* 垂直居中 */
 }
 .error-table {
@@ -240,8 +237,12 @@ const sortedErrorQuestions = computed(() => {
   align-items: center;
 }
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 .file-tag {
   font-size: 12px;

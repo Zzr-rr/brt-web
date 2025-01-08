@@ -1,10 +1,13 @@
 <template>
   <div>
-  
-      
     <el-card class="edit-box-card">
       <!-- 标题输入 -->
-       <ElButton @click="returnMyfile" class="return" icon="Close" text></ElButton>
+      <ElButton
+        @click="returnMyfile"
+        class="return"
+        icon="Close"
+        text
+      ></ElButton>
       <el-form-item label="题目 :">
         <el-input v-model="article.title" placeholder="请输入标题"></el-input>
       </el-form-item>
@@ -42,7 +45,11 @@
 
       <!-- 标签选择 -->
       <el-form-item label="标签 (tag):">
-        <el-select v-model="article.tag" placeholder="请选择一个标签" style="width: 100%">
+        <el-select
+          v-model="article.tag"
+          placeholder="请选择一个标签"
+          style="width: 100%"
+        >
           <el-option
             v-for="tag in tags"
             :key="tag.value"
@@ -61,28 +68,28 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { ElButton, ElMessage } from 'element-plus';
-import { useRouter } from 'vue-router';
-const router=useRouter();
+import { ref } from "vue";
+import { ElButton, ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+const router = useRouter();
 const article = ref({
-  title: '',
-  desc: '',
-  content: '',
-  tag: '',
+  title: "",
+  desc: "",
+  content: "",
+  tag: "",
 });
 
-const returnMyfile=()=>{
-  router.push({name:'myfile'});
-}
+const returnMyfile = () => {
+  router.push({ name: "myfile" });
+};
 const fileList = ref([]);
 const tags = ref([
-  { value: 'genshin', label: '元神' },
-  { value: 'default', label: '默认' },
-  { value: 'homo', label: 'homo' },
+  { value: "genshin", label: "元神" },
+  { value: "default", label: "默认" },
+  { value: "homo", label: "homo" },
 ]);
 
-const dialogImageUrl = ref('');
+const dialogImageUrl = ref("");
 const dialogVisible = ref(false);
 function handleFilePreview(file) {
   console.log(file);
@@ -93,30 +100,27 @@ function handleFileRemove(file, fileList) {
 }
 
 function submitArticle() {
-  if(!article.value.title){
-    ElMessage.error('题目必须填写');
+  if (!article.value.title) {
+    ElMessage.error("题目必须填写");
     return;
-  }
-  else if(article.value.content.length<15){
+  } else if (article.value.content.length < 15) {
     console.log(article.value.content.length);
-    ElMessage.error('至少15字数限制');
+    ElMessage.error("至少15字数限制");
+    return;
+  } else if (!article.value.tag) {
+    ElMessage.error("至少添加一个标签");
     return;
   }
-  else if(!article.value.tag){
-    ElMessage.error('至少添加一个标签');
-    return;
-  }
-  ElMessage.success('成功添加');
-  console.log('文章内容:', article.value);
+  ElMessage.success("成功添加");
+  console.log("文章内容:", article.value);
 }
 </script>
 
 <style scoped>
-.return{
+.return {
   position: absolute;
-  top:90px;
+  top: 90px;
   right: 30px;
-
 }
 .edit-box-card {
   padding: 20px;

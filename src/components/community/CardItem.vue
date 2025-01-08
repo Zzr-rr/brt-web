@@ -4,7 +4,7 @@
       <div
         class="item"
         :key="item.interactionId"
-        @click="goToDetail(item.interactionId)"
+        @click="goToDetail(item.interactionId,item.content)"
       >
         <div class="imgItem">
           <!-- <img :src="item.imgUrl" /> -->
@@ -26,9 +26,12 @@ import CommunityApi from "@/api/communityInteraction";
 import { onMounted, reactive } from "vue";
 const CardItemData = reactive([]);
 const router = useRouter();
-const goToDetail = (id) => {
-  router.push({ name: 'ItemDetail', params: { id } });
-}
+const goToDetail = (id,content) => {
+  router.push({ name: "ItemDetail", params: { id,content } }).catch((error) => {
+    console.log("error", error);
+  });
+};
+
 onMounted(async () => {
   try {
     const response = await CommunityApi.getIteminfo();
@@ -55,7 +58,11 @@ onMounted(async () => {
 .discount {
   border-radius: 10px;
 }
+.item:hover{
+  cursor: pointer;
+};
 .item {
+  
   margin-bottom: 20px;
   background-color: #f9f9f9;
   border-radius: 8px;

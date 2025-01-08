@@ -7,6 +7,7 @@
 
             <el-row class="info-row" justify="start" align="middle">
                 <el-col :span="1">
+                    11
                     <el-avatar :src="StoreLoad.item.avatarUrl"></el-avatar>
                 </el-col>
                 <el-col :span="22">
@@ -31,22 +32,35 @@
             <el-button type="primary" @click="StoreLoad.addComment" style="margin-top: 10px">提交评论</el-button>
         </div>
     </div>
-
+    
     <div v-else>
         <p>Loading...</p>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted,reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import { useItemStore } from '@/store/modules/CommentStore';
 import CommentItem from '@/components/CommentItem.vue';
 import LabelBar from '@/components/LabelBar.vue';
+import CommunityApi from '@/api/communityInteraction';
 const route = useRoute();
+const commentItem=reactive([]);
+const likeItem=reactive([]);
 const itemId = route.params.id;
+const content=route.params.content;
 const StoreLoad = useItemStore();
+const fetchData=async()=>{
+    const response=await CommunityApi.getComment(itemId);
+        content.value=response.data;
+    const response2=await CommunityApi.getLike(itemId);
+        likeItem.value=response2.data;
+    console.log(response);
+    
+}
 onMounted(() => {
+   
     StoreLoad.loadData(itemId);
 });
 </script>
