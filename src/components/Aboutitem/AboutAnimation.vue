@@ -53,7 +53,6 @@ const props =defineProps({
   delay:Number,
   id:Number,
   rotate:Number,
-  
 })
 onMounted(()=>{
   console.log("1");

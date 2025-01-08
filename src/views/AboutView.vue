@@ -1,5 +1,16 @@
 <template>
   <div class="animationcontainer">
+    <AllAboutUs
+      v-for="(name, index) in Us"
+      :key="index"
+      :id="index"
+      :name="name"
+      :size="getRandomNumber(50,80)"
+      :speed="getRandomNumber(2, 5)"
+      :movex="getRandomNumber(100,innerWidth - 300)"
+      :movey="getRandomNumber(-200, -400)"
+      :delay="getRandomNumber(0, 10)"
+    />
     <AboutAnimation
       v-for="(arrow, index) in arrows"
       :key="index"
@@ -17,7 +28,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import AboutAnimation from "@/components/Aboutitem/AboutAnimation.vue";
-
+import AllAboutUs from "@/components/Aboutitem/AllAboutUs.vue";
+import { allowMultipleToast } from "vant";
+const Us=["苟鹏扬","朱子锐","许战","童志斌","李淳政"];
+const innerWidth=window.innerWidth;
 // 创建随机数生成函数
 function getRandomNumber(min, max) {
   return Math.random() * (max - min) + min;
