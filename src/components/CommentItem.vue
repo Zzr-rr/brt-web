@@ -15,10 +15,15 @@
 <script setup>
 defineProps({
   comments: {
-    type: Array,
+    type: Number,
     required: true
   }
 });
+import CommunityApi from '@/api/communityInteraction';
+const fecthData=async()=>{
+  
+}
+}
 </script>
 
 <style scoped>

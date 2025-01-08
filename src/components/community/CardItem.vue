@@ -27,7 +27,7 @@ import { onMounted, reactive } from "vue";
 const CardItemData = reactive([]);
 const router = useRouter();
 const goToDetail = (id,content) => {
-  router.push({ name: "TestView", params: { id,content } });
+  router.push({ name: "TestView", params: { id,content, } });
   // router.push({ name: "wrong-list" });
 };
 

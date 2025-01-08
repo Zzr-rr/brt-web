@@ -11,7 +11,7 @@ const CommunityApi = {
     return axios.post("/brt/file/create", params);
   },
   getLike(params) {
-    return axios.get(`/brt/communityInteraction/list/like?targetId=${params}`);
+    return axios.get(`/api/brt/communityInteraction/list/like?targetId=${params}`);
   },
   getComment(params) {
     return axios.get(
