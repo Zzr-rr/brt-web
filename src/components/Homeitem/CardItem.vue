@@ -63,16 +63,28 @@ const carouselItems = ref([
 .carousel-content {
   width: 100%;
   height: 100%;
+  position: relative;
+}
+
+.carousel-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(240, 240, 240, 0.8), rgba(240, 240, 240, 0.4)), linear-gradient(to right, rgba(240, 240, 240, 0.8), rgba(240, 240, 240, 0.4));
+  z-index: 1;
 }
 
 /* Title styling */
 .title {
   font-size: 48px; /* 增加字体大小 */
-  color: white; /* 设置白色字体 */
+  color: black; /* 设置黑色字体 */
   text-shadow: 
-    1px 1px 0 rgba(0, 0, 0, 0.7),
-    2px 2px 0 rgba(0, 0, 0, 0.5), 
-    3px 3px 5px rgba(0, 0, 0, 0.3); /* 添加较多层次的阴影效果 */
+    1px 1px 0 rgba(255, 255, 255, 0.7),
+    2px 2px 0 rgba(255, 255, 255, 0.5), 
+    3px 3px 5px rgba(255, 255, 255, 0.3); /* 添加较多层次的白色阴影效果 */
   position: absolute;
   top: 20px; /* 放在顶部，留出一些边距 */
   left: 50%;
@@ -88,7 +100,7 @@ const carouselItems = ref([
 .content {
   text-align: left; /* 文本左对齐 */
   max-width: 300px; /* 限制最大宽度 */
-  color: white; /* 设置文本颜色 */
+  color: black; /* 设置文本颜色 */
   padding: 20px; /* 内边距 */
   position: absolute;
   bottom: 200px; /* 放在离底部一定距离的位置 */
@@ -119,5 +131,7 @@ const carouselItems = ref([
 .custom-button {
   padding: 10px 20px;
   font-size: 18px;
+  color: white;
+  background-color: black;
 }
 </style>
